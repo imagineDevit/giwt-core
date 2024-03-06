@@ -13,6 +13,8 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -116,7 +118,17 @@ public class GiwtTestExecutor {
 
         TestCaseReport.TestReport report = new TestCaseReport.TestReport();
 
-        TestCase<?, ?> testCase = root.getTestCase(report, (n, r, p) -> TestCase.create(n, r, p, testCaseClass), TestCase::getName);
+        TestCase<?, ?> testCase = root.getTestCase(report, (n, r, p) ->
+                {
+                    try {
+                        Constructor<? extends TestCase<?, ?>> constructor = testCaseClass.getDeclaredConstructor(String.class, TestCaseReport.TestReport.class, TestParameters.Parameter.class);
+                        return constructor.newInstance(n, r, p);
+                    } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                             IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        , TestCase::getName);
 
         EngineExecutionListener listener = request.getEngineExecutionListener();
 

@@ -4,7 +4,6 @@ package io.github.imagineDevit.giwt.core;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.utils.TextUtils;
 import io.github.imagineDevit.giwt.core.utils.Utils;
-import org.junit.platform.commons.util.ReflectionUtils;
 
 public abstract class TestCase<T,R> extends CloseableCase {
 
@@ -54,25 +53,13 @@ public abstract class TestCase<T,R> extends CloseableCase {
      * @param report the test report
      * @param parameters the test parameters
      */
-    private TestCase(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameters) {
+    protected TestCase(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameters) {
         this.name = name;
         this.report = report;
         this.parameters = parameters;
     }
 
-    /**
-     * Create a test case
-     *
-     * @param name test case name
-     * @param report test case report
-     * @param parameters test case parameters
-     * @return the test case
-     */
-    static  <T, R, C extends TestCase<T, R>> C create(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameters, Class<C> clazz) {
-        return ReflectionUtils.newInstance(clazz, name, report, parameters);
-    }
-
-    abstract void run();
+    protected abstract void run();
 
     /**
      * Returns the name of the test case with its relevant parameters formatted.
