@@ -31,7 +31,7 @@ public class TestParameters<T extends TestParameters.Parameter> {
             System.arraycopy(args, 0, paramValues, 0, len);
         }
 
-        abstract void executeTest(Object testInstance, Method method, TestCase<?,?> testCase);
+        abstract void executeTest(Object testInstance, Method method, ATestCase<?,?> ATestCase);
 
         public String formatName(String name) {
             for (int i = 0; i < paramValues.length; i++) {
@@ -50,8 +50,8 @@ public class TestParameters<T extends TestParameters.Parameter> {
             }
 
             @Override
-            void executeTest(Object testInstance, Method method, TestCase<?, ?> testCase) {
-                ReflectionUtils.invokeMethod(method, testInstance, testCase, paramValues[0]);
+            void executeTest(Object testInstance, Method method, ATestCase<?, ?> ATestCase) {
+                ReflectionUtils.invokeMethod(method, testInstance, ATestCase, paramValues[0]);
             }
         }
 
@@ -65,8 +65,8 @@ public class TestParameters<T extends TestParameters.Parameter> {
             }
 
             @Override
-            void executeTest(Object testInstance, Method method, TestCase<?, ?> testCase) {
-                ReflectionUtils.invokeMethod(method, testInstance, testCase, paramValues[0], paramValues[1]);
+            void executeTest(Object testInstance, Method method, ATestCase<?, ?> ATestCase) {
+                ReflectionUtils.invokeMethod(method, testInstance, ATestCase, paramValues[0], paramValues[1]);
             }
         }
 
@@ -80,8 +80,8 @@ public class TestParameters<T extends TestParameters.Parameter> {
             }
 
             @Override
-            void executeTest(Object testInstance, Method method, TestCase<?, ?> testCase) {
-                ReflectionUtils.invokeMethod(method, testInstance, testCase, paramValues[0], paramValues[1], paramValues[2]);
+            void executeTest(Object testInstance, Method method, ATestCase<?, ?> ATestCase) {
+                ReflectionUtils.invokeMethod(method, testInstance, ATestCase, paramValues[0], paramValues[1], paramValues[2]);
             }
         }
 
@@ -95,8 +95,8 @@ public class TestParameters<T extends TestParameters.Parameter> {
             }
 
             @Override
-            void executeTest(Object testInstance, Method method, TestCase<?, ?> testCase) {
-                ReflectionUtils.invokeMethod(method, testInstance, testCase, paramValues[0], paramValues[1], paramValues[2], paramValues[3]);
+            void executeTest(Object testInstance, Method method, ATestCase<?, ?> ATestCase) {
+                ReflectionUtils.invokeMethod(method, testInstance, ATestCase, paramValues[0], paramValues[1], paramValues[2], paramValues[3]);
             }
 
         }
@@ -111,8 +111,8 @@ public class TestParameters<T extends TestParameters.Parameter> {
             }
 
             @Override
-            void executeTest(Object testInstance, Method method, TestCase<?, ?> testCase) {
-                ReflectionUtils.invokeMethod(method, testInstance, testCase, paramValues[0], paramValues[1], paramValues[2], paramValues[3], paramValues[4]);
+            void executeTest(Object testInstance, Method method, ATestCase<?, ?> ATestCase) {
+                ReflectionUtils.invokeMethod(method, testInstance, ATestCase, paramValues[0], paramValues[1], paramValues[2], paramValues[3], paramValues[4]);
             }
 
         }

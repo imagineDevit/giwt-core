@@ -1,6 +1,6 @@
 package io.github.imagineDevit.giwt.core.utils;
 
-import io.github.imagineDevit.giwt.core.TestCase;
+import io.github.imagineDevit.giwt.core.ATestCase;
 import io.github.imagineDevit.giwt.core.annotations.ParameterizedTest;
 import io.github.imagineDevit.giwt.core.annotations.Test;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -51,13 +51,13 @@ public class GiwtPredicates {
 
     public static Predicate<Method> isTestMethodWithoutTestCaseArg() {
         return method -> AnnotationSupport.isAnnotated(method, Test.class)
-                && Arrays.stream(method.getParameterTypes()).noneMatch(arg -> arg.equals(TestCase.class));
+                && Arrays.stream(method.getParameterTypes()).noneMatch(ATestCase.class::isAssignableFrom);
     }
 
     private static boolean isTestMethod(Method method) {
         return AnnotationSupport.isAnnotated(method, Test.class)
                 && method.getParameterCount() == 1
-                && method.getParameterTypes()[0].equals(TestCase.class)
+                && ATestCase.class.isAssignableFrom(method.getParameterTypes()[0])
                 && method.getReturnType().equals(Void.TYPE);
     }
 
@@ -83,7 +83,7 @@ public class GiwtPredicates {
 
         Class<?>[] parameterTypes = method.getParameterTypes();
         int length = parameterTypes.length;
-        if (!parameterTypes[0].equals(TestCase.class)) return false;
+        if (!ATestCase.class.isAssignableFrom(parameterTypes[0])) return false;
 
         Class<?>[] paramsTypes = Arrays.copyOfRange(parameterTypes, 1, length);
 

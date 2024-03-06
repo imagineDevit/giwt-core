@@ -13,14 +13,12 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Optional;
 
-public class GiwtTestExecutor {
+public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
-    private final Class<? extends TestCase<?, ?>> testCaseClass;
+
 
     private TestCaseReport report;
 
@@ -30,9 +28,9 @@ public class GiwtTestExecutor {
 
     private Boolean withReport;
 
-    protected GiwtTestExecutor(Class<? extends TestCase<?, ?>> testCaseClass) {
-        this.testCaseClass = testCaseClass;
-    }
+    public abstract void run(TC testCase);
+
+    public abstract TC createTestCase(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameter);
 
     public void execute(ExecutionRequest request, TestDescriptor root) {
 
@@ -73,7 +71,6 @@ public class GiwtTestExecutor {
         }
     }
 
-
     private void executeForMethodDescriptor(ExecutionRequest request, GiwtMethodTestDescriptor md) {
         String className = md.getTestMethod().getDeclaringClass().getName();
 
@@ -84,7 +81,6 @@ public class GiwtTestExecutor {
                     return cr;
                 })
         );
-
 
         TestCaseReport.TestReport testReport = executeTest(request, md);
         classReport.ifPresent(cr -> cr.addTestReport(testReport));
@@ -118,17 +114,7 @@ public class GiwtTestExecutor {
 
         TestCaseReport.TestReport report = new TestCaseReport.TestReport();
 
-        TestCase<?, ?> testCase = root.getTestCase(report, (n, r, p) ->
-                {
-                    try {
-                        Constructor<? extends TestCase<?, ?>> constructor = testCaseClass.getDeclaredConstructor(String.class, TestCaseReport.TestReport.class, TestParameters.Parameter.class);
-                        return constructor.newInstance(n, r, p);
-                    } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                             IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-        , TestCase::getName);
+        TC testCase = root.getTestCase(report, this::createTestCase, ATestCase::getName);
 
         EngineExecutionListener listener = request.getEngineExecutionListener();
 
@@ -148,11 +134,11 @@ public class GiwtTestExecutor {
                             ReflectionUtils.invokeMethod(root.getTestMethod(), root.getTestInstance(), testCase);
                         }
 
-                        TestCase.class.getDeclaredMethod("run").invoke(testCase);
+                        this.run(testCase);
 
                         report.setStatus(TestCaseReport.TestReport.Status.SUCCESS);
 
-                        System.out.println(TestCase.Result.SUCCESS.message(null));
+                        System.out.println(ATestCase.Result.SUCCESS.message(null));
 
                         listener.executionFinished(root, TestExecutionResult.successful());
 
@@ -165,12 +151,12 @@ public class GiwtTestExecutor {
                         Arrays.stream(e.getStackTrace()).forEach(element -> report.addTrace("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at %s".formatted(element.toString())));
 
                         if (e.getCause() != null) {
-                            System.out.println(TestCase.Result.FAILURE.message(e.getCause().getMessage()));
+                            System.out.println(ATestCase.Result.FAILURE.message(e.getCause().getMessage()));
                             report.setFailureReason(e.getCause().getMessage());
                             report.addTrace("Caused by: %s : %s".formatted(e.getCause().getClass().getName(), e.getCause().getMessage()));
                             Arrays.stream(e.getCause().getStackTrace()).forEach(element -> report.addTrace("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;at %s".formatted(element.toString())));
                         } else {
-                            System.out.println(TestCase.Result.FAILURE.message(e.getMessage()));
+                            System.out.println(ATestCase.Result.FAILURE.message(e.getMessage()));
                             report.setFailureReason(e.getMessage());
                         }
 
@@ -194,5 +180,7 @@ public class GiwtTestExecutor {
     private Optional<TestCaseReport> getReport() {
         return Optional.ofNullable(report);
     }
+
+
 
 }

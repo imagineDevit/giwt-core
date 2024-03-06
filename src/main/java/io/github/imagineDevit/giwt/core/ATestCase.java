@@ -5,7 +5,7 @@ import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.utils.TextUtils;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 
-public abstract class TestCase<T,R> extends CloseableCase {
+public abstract class ATestCase<T,R> extends CloseableCase {
 
     /**
      * Test case result that can be either success or failure
@@ -32,8 +32,8 @@ public abstract class TestCase<T,R> extends CloseableCase {
         }
     }
 
-    // region Fields
 
+    // region Fields
     /**
      * Test case name
      */
@@ -42,9 +42,9 @@ public abstract class TestCase<T,R> extends CloseableCase {
     /**
      * Test case report
      */
-    private final TestCaseReport.TestReport report;
+    protected final TestCaseReport.TestReport report;
 
-    private final TestParameters.Parameter parameters;
+    protected final TestParameters.Parameter parameters;
 
     /**
      * Constructor
@@ -53,7 +53,7 @@ public abstract class TestCase<T,R> extends CloseableCase {
      * @param report the test report
      * @param parameters the test parameters
      */
-    protected TestCase(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameters) {
+    protected ATestCase(String name, TestCaseReport.TestReport report, TestParameters.Parameter parameters) {
         this.name = name;
         this.report = report;
         this.parameters = parameters;

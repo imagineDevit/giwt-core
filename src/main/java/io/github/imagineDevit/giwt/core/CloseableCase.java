@@ -11,7 +11,7 @@ public abstract class CloseableCase {
         closed = true;
     }
 
-    <S> S runIfOpen(Supplier<S> fn) {
+    protected <S> S runIfOpen(Supplier<S> fn) {
         return Utils.runIfOpen(this.closed, fn, this::close);
     }
 }

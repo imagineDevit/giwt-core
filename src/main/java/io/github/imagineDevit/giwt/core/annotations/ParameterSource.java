@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * Represents an annotation for specifying the name of a parameter source.
- * This annotation is used to annotate a method that returns a {@link io.github.imagineDevit.giwt.TestParameters} object.
+ * This annotation is used to annotate a method that returns a {@link io.github.imagineDevit.giwt.core.TestParameters} object.
  *
  * <p>Example usage:
  *  <pre>{@code
@@ -44,7 +44,7 @@ import java.lang.annotation.*;
  *  }</pre>
  *
  *
- * @see io.github.imagineDevit.giwt.TestParameters
+ * @see io.github.imagineDevit.giwt.core.TestParameters
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

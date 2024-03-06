@@ -1,6 +1,6 @@
 package io.github.imagineDevit.giwt.core.descriptors;
 
-import io.github.imagineDevit.giwt.core.TestCase;
+import io.github.imagineDevit.giwt.core.ATestCase;
 import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.*;
 import io.github.imagineDevit.giwt.core.callbacks.*;
@@ -104,7 +104,7 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
         return params;
     }
 
-    public TestCase<?, ?> getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TestCase<?, ?>> createTestCase, Function<TestCase<?, ?>, String> getName) {
+    public  <TC extends ATestCase<?, ?>> TC getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TC> createTestCase, Function<TC, String> getName) {
         String name;
         if (params == null) {
             name = Utils.getTestName(this.testMethod.getAnnotation(Test.class).value(), this.testMethod);
@@ -115,7 +115,7 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
 
         report.setStatus(TestReport.Status.SKIPPED);
 
-        TestCase<?, ?> tc = createTestCase.apply(name, report, getParams());
+        TC tc = createTestCase.apply(name, report, getParams());
 
         report.setName(getName.apply(tc));
 

@@ -9,14 +9,14 @@ import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
-public abstract class GiwtTestEngine implements TestEngine {
+public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExecutor<TC>> implements TestEngine {
 
-    private final Class<? extends TestCase<?, ?>> testCaseClass;
+    private final E executor;
 
     public static final String ENGINE_ID = "giwt-test-engine";
 
-    protected GiwtTestEngine(Class<? extends TestCase<?, ?>> testCaseClass) {
-        this.testCaseClass = testCaseClass;
+    protected GiwtTestEngine(E executor) {
+        this.executor = executor;
     }
 
     @Override
@@ -47,7 +47,7 @@ public abstract class GiwtTestEngine implements TestEngine {
     @Override
     public void execute(ExecutionRequest executionRequest) {
         TestDescriptor root = executionRequest.getRootTestDescriptor();
-        new GiwtTestExecutor(this.testCaseClass).execute(executionRequest, root);
+       this.executor.execute(executionRequest, root);
     }
 
 }
