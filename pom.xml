@@ -160,7 +160,7 @@
                         </goals>
                         <configuration>
                             <keyname>0x2C803A9C</keyname>
-                            <passphraseServerId>0x2C803A9C</passphraseServerId>
+                            <passphraseServerId>ossrh</passphraseServerId>
                         </configuration>
                     </execution>
                 </executions>
