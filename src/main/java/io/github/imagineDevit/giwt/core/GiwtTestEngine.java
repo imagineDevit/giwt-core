@@ -9,6 +9,13 @@ import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
+/**
+ * Giwt test engine
+ *
+ * @see TestEngine
+ * @param <TC>
+ * @param <E>
+ */
 public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExecutor<TC>> implements TestEngine {
 
     private final E executor;

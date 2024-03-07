@@ -13,6 +13,15 @@ import java.util.stream.Collectors;
 
 import static io.github.imagineDevit.giwt.core.annotations.processors.Constants.*;
 
+/**
+ *
+ * @param methodName The method name
+ * @param methodReturnType The method return type
+ * @param paramRecordName The generated record name
+ * @param paramName The param name
+ * @param paramsWithType The params name and type
+ * @param paramsValues The params values
+ */
 public record MethodProcessingData(
         String methodName,
         String methodReturnType,

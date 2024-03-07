@@ -16,10 +16,14 @@ import java.util.Optional;
 
 import static io.github.imagineDevit.giwt.core.utils.Utils.*;
 
+/**
+ * A descriptor for a <strong>giwt</strong> parameterized test method
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescriptor {
 
     private final Method testMethod;
-    //private final Method parameterSourceMethod;
 
     private final Object testInstance;
 
@@ -32,6 +36,7 @@ public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescripto
     private final AfterEachCallback afterEachCallback;
 
     private final List<? extends TestParameters.Parameter> parameters;
+
     private final TestConfiguration configuration;
 
     public GiwtParameterizedMethodTestDescriptor(Method testMethod, List<? extends TestParameters.Parameter> parameters, Object testInstance, UniqueId uniqueId, GiwtCallbacks callbacks, TestConfiguration configuration) {
@@ -85,7 +90,6 @@ public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescripto
 
         addAllChildren();
     }
-
 
     @Override
     public Type getType() {

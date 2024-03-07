@@ -5,6 +5,11 @@ import io.github.imagineDevit.giwt.core.utils.TextUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Exception thrown when a duplicated test names are found
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public final class DuplicateTestNameException extends GiwtError {
 
     public DuplicateTestNameException(List<String> names) {

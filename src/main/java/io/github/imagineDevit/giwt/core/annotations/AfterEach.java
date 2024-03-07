@@ -23,9 +23,6 @@ import java.lang.annotation.*;
  *
  * <pre>{@code
  *
- * import org.junit.jupiter.api.AfterEach;
- * import org.junit.jupiter.api.Test;
- *
  * class MyTest {
  *
  *     @AfterEach(order = 1)
@@ -50,7 +47,9 @@ import java.lang.annotation.*;
  * @see BeforeAll
  * @see BeforeEach
  * @see AfterAll
- * @since 1.0
+ *
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 
 @Retention(RetentionPolicy.RUNTIME)

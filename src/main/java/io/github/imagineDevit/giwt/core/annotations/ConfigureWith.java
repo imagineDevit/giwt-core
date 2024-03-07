@@ -9,6 +9,8 @@ import java.lang.annotation.*;
  * The annotated class can be configured with an instance of the specified test configuration class.
  *
  * @see TestConfiguration
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

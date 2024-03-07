@@ -16,9 +16,16 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import java.util.Arrays;
 import java.util.Optional;
 
+
+/**
+ * Giwt test executor
+ *
+ * @param <TC> the test case type
+ * @see GiwtTestEngine
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public abstract class GiwtTestExecutor<TC extends ATestCase> {
-
-
 
     private TestCaseReport report;
 
