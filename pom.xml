@@ -159,6 +159,7 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
+                            <keyname>sedhjo@gmail.com</keyname>
                             <passphraseServerId>ossrh</passphraseServerId>
                         </configuration>
                     </execution>
