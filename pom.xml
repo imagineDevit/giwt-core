@@ -7,6 +7,9 @@
     <groupId>io.github.imagineDevit</groupId>
     <artifactId>giwt-core</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <description>
+        A JUnit based library that allow developers to write unit test on GIVEN-WHEN-THEN format
+    </description>
 
     <name>giwt-core</name>
     <url>https://github.com/imagineDevit/giwt-core</url>
@@ -158,10 +161,6 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
-                        <configuration>
-                            <keyname>0x2C803A9C</keyname>
-                            <passphraseServerId>ossrh</passphraseServerId>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
