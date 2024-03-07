@@ -1,9 +1,20 @@
 package io.github.imagineDevit.giwt.core;
 
+import io.github.imagineDevit.giwt.core.annotations.ConfigureWith;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+
+/**
+ * Test configuration class
+ *
+ * @see ConfigureWith
+ *
+ * @since 0.0.1
+ * @author Henri Joel SEDJAME
+ */
 public interface TestConfiguration {
 
     Map<String, TestParameters<?>> parameterSources();

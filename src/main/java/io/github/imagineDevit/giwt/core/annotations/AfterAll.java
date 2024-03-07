@@ -7,10 +7,6 @@ import java.lang.annotation.*;
  * The annotated method must be public, optionally taking no arguments, and not throwing any exception.
  * The execution order of methods with this annotation can be controlled using the {@code order} parameter.
  *
- * <p>The {@code AfterAll} annotation is used in conjunction with test frameworks such as JUnit or TestNG.
- * When a test class is executed, all methods annotated with {@code AfterAll} will be invoked after all test methods have run.
- * This can be used to perform cleanup tasks or to release resources that were created during the test execution.
- *
  * <p>Example usage:
  * <pre>{@code
  * @AfterAll(order = 1)
@@ -33,6 +29,9 @@ import java.lang.annotation.*;
  * @see BeforeAll
  * @see AfterEach
  * @see BeforeEach
+ *
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

@@ -4,6 +4,11 @@ import io.github.imagineDevit.giwt.core.utils.Utils;
 
 import java.util.function.Supplier;
 
+/**
+ * Closeable case
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public abstract class CloseableCase {
     private boolean closed = false;
 

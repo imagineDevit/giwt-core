@@ -5,6 +5,14 @@ import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.utils.TextUtils;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 
+
+/**
+ * Test case abstract class.
+ * @param <T>
+ * @param <R>
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public abstract class ATestCase<T,R> extends CloseableCase {
 
     /**
@@ -58,6 +66,7 @@ public abstract class ATestCase<T,R> extends CloseableCase {
         this.report = report;
         this.parameters = parameters;
     }
+
 
     protected abstract void run();
 

@@ -13,6 +13,11 @@ import org.junit.platform.engine.support.descriptor.ClassSource;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * A descriptor for a <strong>giwt</strong> test class
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
 
     private final Class<?> testClass;

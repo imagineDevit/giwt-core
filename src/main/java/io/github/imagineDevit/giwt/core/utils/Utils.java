@@ -18,8 +18,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-
-
+/**
+ * This class contains utility methods that are used to run test callbacks, to get test parameters and other utility methods.
+ * @since 0.0.1
+ * @author Henri Joel SEDJAME
+ */
 public abstract class Utils {
 
     public static final String DASH = "-".repeat(50);
@@ -29,14 +32,6 @@ public abstract class Utils {
         else return name;
     }
 
-    public static String getTestName(Method method) {
-        return Optional.ofNullable(method.getAnnotation(Test.class))
-                .map(Test::value)
-                .or(() -> Optional.ofNullable(method.getAnnotation(ParameterizedTest.class).name()))
-                .or(() -> Optional.of(""))
-                .map(s -> getTestName(s, method))
-                .get();
-    }
 
     public static void runCallbacks(Map<Object, List<Method>> methods, Function<Method, Integer> order) {
         methods

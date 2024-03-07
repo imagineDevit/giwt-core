@@ -9,6 +9,9 @@ import java.util.stream.Collectors;
  * <p>
  * The data model is a tree structure of {@link ClassReport} and {@link TestReport}.
  * </p>
+ *
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 public class TestCaseReport {
 

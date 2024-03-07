@@ -7,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+
+/**
+ * Test parameters
+ * @param <T>
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class TestParameters<T extends TestParameters.Parameter> {
 
     private final List<T> parameters = new ArrayList<>();
@@ -22,7 +29,7 @@ public class TestParameters<T extends TestParameters.Parameter> {
         return parameters;
     }
 
-    public abstract static class Parameter {
+    public abstract sealed static class Parameter {
 
         Object[] paramValues;
 

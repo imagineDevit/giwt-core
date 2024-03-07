@@ -12,6 +12,11 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 import java.lang.reflect.Method;
 import java.net.URI;
 
+/**
+ * This class contains utility methods that are used to append tests to the root of the engine descriptor.
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class SelectorUtils {
 
     public static void appendTestInRoot(ClasspathRootSelector selector, EngineDescriptor root) {

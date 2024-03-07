@@ -1,9 +1,11 @@
 package io.github.imagineDevit.giwt.core.annotations;
 
+import io.github.imagineDevit.giwt.core.TestParameters;
+
 import java.lang.annotation.*;
 
 /**
- * Represents an annotation for specifying the name of a parameter source.
+ * An annotation for specifying the name of a parameter source.
  * This annotation is used to annotate a method that returns a {@link io.github.imagineDevit.giwt.core.TestParameters} object.
  *
  * <p>Example usage:
@@ -44,8 +46,9 @@ import java.lang.annotation.*;
  *  }</pre>
  *
  *
- * @see io.github.imagineDevit.giwt.core.TestParameters
- *
+ * @see TestParameters
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})

@@ -7,9 +7,17 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+/**
+ * This class contains a utility method that allows to match a value against a list of cases and return the result of the
+ * first matching case.
+ *
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class Matchers {
 
     public static sealed class Result<T> {
+
         public boolean isSuccess() {
             return this instanceof Success;
         }
@@ -23,6 +31,7 @@ public class Matchers {
         }
 
         public static final class Success<T> extends Result<T> {
+
             private final T value;
 
             public Success(T value) {
@@ -34,7 +43,8 @@ public class Matchers {
             }
         }
 
-        public static final class Failure<T> extends Result<T> {
+        public static final class Failure<T> extends Result<T>  {
+
             private final String message;
 
             public Failure(String message) {

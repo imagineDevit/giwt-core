@@ -1,5 +1,10 @@
 package io.github.imagineDevit.giwt.core.callbacks;
 
+/**
+ * Callback interface
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public sealed interface Callback permits AfterAllCallback, AfterEachCallback, BeforeAllCallback, BeforeEachCallback {
 
     class Methods {

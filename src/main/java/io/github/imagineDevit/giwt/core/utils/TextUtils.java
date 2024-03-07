@@ -1,5 +1,10 @@
 package io.github.imagineDevit.giwt.core.utils;
 
+/**
+ * This class contains utility methods that are used to format text in the console.
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class TextUtils {
 
     enum U {

@@ -65,6 +65,8 @@ import java.lang.annotation.*;
  *
  * @see ParameterRecordName
  * @see GiwtProxyableProcessor
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})

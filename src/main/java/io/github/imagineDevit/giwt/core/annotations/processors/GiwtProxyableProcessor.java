@@ -26,6 +26,12 @@ import java.util.stream.Collectors;
 
 import static io.github.imagineDevit.giwt.core.annotations.processors.Constants.*;
 
+/**
+ * GiwtProxyable annotation processor
+ * @see io.github.imagineDevit.giwt.core.annotations.GiwtProxyable
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 @SupportedAnnotationTypes("io.github.imagineDevit.giwt.core.annotations.GiwtProxyable")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
 public class GiwtProxyableProcessor extends AbstractProcessor {

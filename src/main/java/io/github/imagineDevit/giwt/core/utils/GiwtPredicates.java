@@ -18,7 +18,11 @@ import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.success;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.match;
 import static org.junit.platform.commons.util.ReflectionUtils.*;
 
-
+/**
+ * This class contains predicates that are used to filter test classes and methods.
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class GiwtPredicates {
 
     public static Predicate<Class<?>> isTestClass() {

@@ -10,6 +10,11 @@ import java.util.Objects;
 
 /**
  * This class is responsible for processing the report template and generating the report.
+ * It uses the FreeMarker library to process the template and generate the report.
+ * The report is generated in the target/giwtunit directory.
+ * The report is generated in HTML format.
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
 public class ReportProcessor {
 

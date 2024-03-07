@@ -1,5 +1,10 @@
 package io.github.imagineDevit.giwt.core.annotations.processors;
 
+/**
+ * Constants properties
+ * @author Henri Joel SEDJAME
+ * @since 0.0.1
+ */
 public class Constants {
     public static final String CLASSPATH_RESOURCE_LOADER_CLASS = "classpath.resource.loader.class";
     public static final String CLASSPATH = "classpath";
