@@ -159,7 +159,7 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <keyname>giwt-core</keyname>
+                            <keyname>7CF0CE862C803A9C</keyname>
                             <passphraseServerId>ossrh</passphraseServerId>
                         </configuration>
                     </execution>
