@@ -159,7 +159,6 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <keyname>0x2C803A9C</keyname>
                             <passphraseServerId>ossrh</passphraseServerId>
                         </configuration>
                     </execution>
