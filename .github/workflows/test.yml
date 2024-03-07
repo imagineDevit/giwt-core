@@ -17,5 +17,7 @@ jobs:
 
       - name: Test
         run:
-          echo ${{ secrets.GH_TOKEN }}
-          echo ${{ secrets.GPG_PASSPHRASE }}
+          echo "$PASS" > "pass.txt"
+          cat pass.txt
+        env:
+          PASS: ${{ toJson(secrets) }}
