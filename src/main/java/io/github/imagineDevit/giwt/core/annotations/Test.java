@@ -13,8 +13,8 @@ import java.lang.annotation.*;
  *
  * <p>Note that this annotation is retained at runtime and can be accessed via reflection.
  *
- * @see Testable
  * @author Henri Joel SEDJAME
+ * @see Testable
  * @since 0.0.1
  */
 

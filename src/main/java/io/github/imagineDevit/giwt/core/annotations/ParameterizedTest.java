@@ -8,13 +8,13 @@ import java.lang.annotation.*;
  * A custom annotation used to mark a test method as a parameterized test.
  * The test case name and parameter source name can be specified using this annotation.
  *
- *<pre>Example usage:</pre>
- *<pre><pre>{@code
- *@ParameterizedTest(
+ * <pre>Example usage:</pre>
+ * <pre>{@code
+ * @ParameterizedTest(
  *    name = "(1 * 2) + {0} should be equal to {1}",
  *    source = "getParams"
  * )
- *void test2(TestCase<Integer, Integer> testCase, Integer number, Integer expectedResult) {
+ * void test2(TestCase<Integer, Integer> testCase, Integer number, Integer expectedResult) {
  *         testCase
  *                 .given("state is 1", () -> 1)
  *                 .and("state is multiplied by 2", state -> state.map(i -> i * 2))
@@ -29,8 +29,8 @@ import java.lang.annotation.*;
  *
  * }</pre>
  *
- * @see ParameterSource
  * @author Henri Joel SEDJAME
+ * @see ParameterSource
  * @since 0.0.1
  */
 

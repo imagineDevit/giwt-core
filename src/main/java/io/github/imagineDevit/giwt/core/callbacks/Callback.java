@@ -2,6 +2,7 @@ package io.github.imagineDevit.giwt.core.callbacks;
 
 /**
  * Callback interface
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

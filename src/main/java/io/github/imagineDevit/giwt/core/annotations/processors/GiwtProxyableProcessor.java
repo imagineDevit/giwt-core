@@ -28,8 +28,9 @@ import static io.github.imagineDevit.giwt.core.annotations.processors.Constants.
 
 /**
  * GiwtProxyable annotation processor
- * @see io.github.imagineDevit.giwt.core.annotations.GiwtProxyable
+ *
  * @author Henri Joel SEDJAME
+ * @see io.github.imagineDevit.giwt.core.annotations.GiwtProxyable
  * @since 0.0.1
  */
 @SupportedAnnotationTypes("io.github.imagineDevit.giwt.core.annotations.GiwtProxyable")
@@ -61,11 +62,11 @@ public class GiwtProxyableProcessor extends AbstractProcessor {
 
         annotations.forEach(annotation -> {
 
-            for (Element element: roundEnv.getElementsAnnotatedWith(annotation)) {
+            for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
 
                 TypeElement typeElement = (TypeElement) element;
 
-                List<MethodProcessingData> datas =typeElement.getEnclosedElements()
+                List<MethodProcessingData> datas = typeElement.getEnclosedElements()
                         .stream()
                         .filter(e -> e instanceof ExecutableElement)
                         .map(e -> (ExecutableElement) e)
@@ -103,7 +104,7 @@ public class GiwtProxyableProcessor extends AbstractProcessor {
 
         JavaFileObject builderFile = processingEnv.getFiler().createSourceFile(generatedClassName);
 
-        try(Writer writer = new PrintWriter(builderFile.openWriter())) {
+        try (Writer writer = new PrintWriter(builderFile.openWriter())) {
             template.merge(context, writer);
         }
     }

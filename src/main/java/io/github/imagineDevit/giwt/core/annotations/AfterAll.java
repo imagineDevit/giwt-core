@@ -26,17 +26,16 @@ import java.lang.annotation.*;
  *
  * <p>Note that the {@code AfterAll} annotation is a meta-annotation, and can be used to create custom annotations for more specific use cases.
  *
+ * @author Henri Joel SEDJAME
  * @see BeforeAll
  * @see AfterEach
  * @see BeforeEach
- *
- * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 @Documented
-public @interface AfterAll  {
+public @interface AfterAll {
 
     /**
      * @return the callback invocation order

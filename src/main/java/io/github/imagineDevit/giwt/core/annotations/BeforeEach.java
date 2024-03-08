@@ -15,11 +15,11 @@ import java.lang.annotation.*;
  * <p>
  * This annotation is only relevant at runtime and can be accessed via reflection.
  *
- * @since 1.0
+ * @author Henri Joel SEDJAME
  * @see AfterEach
  * @see BeforeAll
  * @see AfterAll
- * @author Henri Joel SEDJAME
+ * @since 1.0
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)

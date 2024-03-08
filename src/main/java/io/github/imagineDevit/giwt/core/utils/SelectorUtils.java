@@ -14,6 +14,7 @@ import java.net.URI;
 
 /**
  * This class contains utility methods that are used to append tests to the root of the engine descriptor.
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
@@ -41,7 +42,7 @@ public class SelectorUtils {
 
     public static void appendTestInMethod(Method method, EngineDescriptor root) {
         Class<?> clazz = method.getDeclaringClass();
-        var instance= ReflectionUtils.newInstance(clazz);
+        var instance = ReflectionUtils.newInstance(clazz);
 
         Utils.checkTestCaseArgPresent(method);
 
@@ -53,7 +54,7 @@ public class SelectorUtils {
                     root.getUniqueId(),
                     null, new GiwtCallbacks(null, null, null, null)));
 
-        } else if(GiwtPredicates.isParameterizedMethodTest().test(method)) {
+        } else if (GiwtPredicates.isParameterizedMethodTest().test(method)) {
             root.addChild(new GiwtParameterizedMethodTestDescriptor(method, null, instance, root.getUniqueId(), new GiwtCallbacks(null, null, null, null), null));
         }
     }

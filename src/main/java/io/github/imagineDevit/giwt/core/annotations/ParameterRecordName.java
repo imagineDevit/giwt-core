@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Used to specify the name of a record generated for a method .
  *
- * @see GiwtProxyable
  * @author Henri Joel SEDJAME
+ * @see GiwtProxyable
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.SOURCE)

@@ -2,6 +2,7 @@ package io.github.imagineDevit.giwt.core.errors;
 
 /**
  * Giwt error abstract class
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

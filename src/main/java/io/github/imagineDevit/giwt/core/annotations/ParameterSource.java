@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * This annotation is used to annotate a method that returns a {@link io.github.imagineDevit.giwt.core.TestParameters} object.
  *
  * <p>Example usage:
- *  <pre>{@code
+ * <pre>{@code
  *
  *    @ParametersSource("getParams")
  *    private TestParameters<TestParameters.Parameter.P2<Integer, Integer>> getParams() {
@@ -45,9 +45,8 @@ import java.lang.annotation.*;
  *    // other test methods
  *  }</pre>
  *
- *
- * @see TestParameters
  * @author Henri Joel SEDJAME
+ * @see TestParameters
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)

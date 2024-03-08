@@ -26,7 +26,7 @@ public class TestCaseReport {
         return classReports;
     }
 
-    public Optional<ClassReport> getClassReport(String name){
+    public Optional<ClassReport> getClassReport(String name) {
         return classReports.stream()
                 .filter(cr -> cr.name.equals(name))
                 .findFirst();
@@ -47,7 +47,7 @@ public class TestCaseReport {
         map.put("skippedCount", getSkippedCount());
         map.put("successCount", getSuccessCount());
 
-        map.put("successRate", (((double) getSuccessCount())/(double)getTotalTestCount())*100);
+        map.put("successRate", (((double) getSuccessCount()) / (double) getTotalTestCount()) * 100);
 
         return map;
     }
@@ -55,7 +55,7 @@ public class TestCaseReport {
     // endregion
 
     // region private methods
-    private int getTotalTestCount(){
+    private int getTotalTestCount() {
         return classReports.stream()
                 .mapToInt(cr -> cr.testReports.size())
                 .sum();
@@ -83,12 +83,11 @@ public class TestCaseReport {
 
     public static class ClassReport {
         private final String name;
+        private final List<TestReport> testReports = new ArrayList<>();
 
         public ClassReport(String name) {
             this.name = name;
         }
-
-        private final List<TestReport> testReports = new ArrayList<>();
 
         public String getName() {
             return name;
@@ -113,7 +112,7 @@ public class TestCaseReport {
                     '}';
         }
 
-        public Map<String,Object> toMap(){
+        public Map<String, Object> toMap() {
             Map<String, Object> map = new HashMap<>();
             map.put("name", name);
             map.put("testReports", testReports.stream().map(TestReport::toMap).collect(Collectors.toList()));
@@ -134,7 +133,7 @@ public class TestCaseReport {
         }
 
         public long getSkippedCount() {
-            return  testReports.stream()
+            return testReports.stream()
                     .filter(testReport -> testReport.getStatus() == TestReport.Status.SKIPPED)
                     .count();
         }
@@ -147,6 +146,71 @@ public class TestCaseReport {
     }
 
     public static class TestReport {
+
+        private final List<DescriptionItem> descriptionItems = new ArrayList<>();
+        private final List<String> stacktraces = new ArrayList<>();
+        private String name;
+        private Status status;
+        private String failureReason;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Status getStatus() {
+            return status;
+        }
+
+        public void setStatus(Status status) {
+            this.status = status;
+        }
+
+        public void addDescriptionItem(DescriptionItem description) {
+            this.descriptionItems.add(description);
+        }
+
+        public void addTrace(String stacktrace) {
+            this.stacktraces.add(stacktrace);
+        }
+
+        public void setFailureReason(String failureReason) {
+            this.failureReason = failureReason;
+        }
+
+        public Map<String, Object> toMap() {
+            Map<String, Object> map = new HashMap<>();
+            map.put("name", "%s %s".formatted(status.symbol, name));
+            map.put("descriptions", descriptionItems.stream().map(DescriptionItem::toMap).collect(Collectors.toList()));
+            map.put("status", status.label);
+            map.put("statusColor", status.cssClass);
+
+            if (!stacktraces.isEmpty()) map.put("stacktraces", stacktraces);
+
+            map.put("failureReason", failureReason);
+            return map;
+        }
+
+        public enum Status {
+            SUCCESS("&#9989;", "passed", "text-success"),
+            FAILURE("&#10060;", "failed", "text-danger"),
+            SKIPPED("&#10069;", "skipped", "text-warning");
+
+            final String symbol;
+            final String label;
+
+            final String cssClass;
+
+            Status(String s, String l, String css) {
+                this.symbol = s;
+                this.label = l;
+                this.cssClass = css;
+            }
+
+        }
 
         public record DescriptionItem(String prefix, String label) {
 
@@ -167,77 +231,12 @@ public class TestCaseReport {
             }
 
 
-            public Map<String, String> toMap(){
+            public Map<String, String> toMap() {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("prefix", prefix);
                 map.put("label", label);
                 return map;
             }
-        }
-
-        public enum Status {
-            SUCCESS("&#9989;", "passed", "text-success"),
-            FAILURE("&#10060;", "failed", "text-danger"),
-            SKIPPED("&#10069;", "skipped", "text-warning");
-
-            final String symbol;
-            final String label;
-
-            final String cssClass;
-
-            Status(String s, String l, String css){
-                this.symbol = s;
-                this.label = l;
-                this.cssClass = css;
-            }
-
-        }
-
-        private String name;
-        private final List<DescriptionItem> descriptionItems = new ArrayList<>();
-        private Status status;
-        private final List<String> stacktraces = new ArrayList<>();
-        private String failureReason;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        public void addDescriptionItem(DescriptionItem description) {
-            this.descriptionItems.add(description);
-        }
-
-        public void setStatus(Status status) {
-            this.status = status;
-        }
-
-        public void addTrace(String stacktrace) {
-            this.stacktraces.add(stacktrace);
-        }
-
-        public void setFailureReason(String failureReason) {
-            this.failureReason = failureReason;
-        }
-
-        public Map<String, Object> toMap(){
-            Map<String, Object> map = new HashMap<>();
-            map.put("name", "%s %s".formatted(status.symbol, name));
-            map.put("descriptions", descriptionItems.stream().map(DescriptionItem::toMap).collect(Collectors.toList()));
-            map.put("status", status.label);
-            map.put("statusColor", status.cssClass);
-
-            if (!stacktraces.isEmpty()) map.put("stacktraces", stacktraces);
-
-            map.put("failureReason", failureReason);
-            return map;
         }
     }
 }

@@ -13,6 +13,7 @@ import java.util.Objects;
  * It uses the FreeMarker library to process the template and generate the report.
  * The report is generated in the target/giwtunit directory.
  * The report is generated in HTML format.
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
@@ -29,9 +30,9 @@ public class ReportProcessor {
 
         InputStream source = Objects.requireNonNull(ReportProcessor.class.getClassLoader().getResourceAsStream("report.ftl"));
 
-         try (var target = new FileOutputStream(file)) {
-                target.write(source.readAllBytes());
-         }
+        try (var target = new FileOutputStream(file)) {
+            target.write(source.readAllBytes());
+        }
 
 
         configuration.setDirectoryForTemplateLoading(tempDirectory);
