@@ -20,7 +20,7 @@ import java.util.function.Function;
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
-@SuppressWarnings("unchecked, unused")
+@SuppressWarnings({"unchecked", "unused"})
 public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT extends ATestCaseResult<R>> extends CloseableCase {
 
     protected final String name;
