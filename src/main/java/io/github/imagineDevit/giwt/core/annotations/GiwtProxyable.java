@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * <br>
  * Example:
  * <pre>
- *{@code
+ * {@code
  *
  * @GiwtProxyable
  * class Foo {
@@ -63,12 +63,13 @@ import java.lang.annotation.*;
  * }
  * </pre>
  *
+ * @author Henri Joel SEDJAME
  * @see ParameterRecordName
  * @see GiwtProxyableProcessor
- * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
 @Documented
-public @interface GiwtProxyable {}
+public @interface GiwtProxyable {
+}

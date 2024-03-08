@@ -21,16 +21,14 @@ import java.util.Optional;
  * Giwt test executor
  *
  * @param <TC> the test case type
- * @see GiwtTestEngine
  * @author Henri Joel SEDJAME
+ * @see GiwtTestEngine
  * @since 0.0.1
  */
-public abstract class GiwtTestExecutor<TC extends ATestCase> {
-
-    private TestCaseReport report;
+public abstract class GiwtTestExecutor<TC extends ATestCase<?,?,?,?>> {
 
     private static Integer NB = null;
-
+    private TestCaseReport report;
     private boolean allCallbacksRan = false;
 
     private Boolean withReport;
@@ -67,7 +65,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof GiwtMethodTestDescriptor mtd) {
-            mtd.execute(d ->  executeForMethodDescriptor(request, mtd), allCallbacksRan);
+            mtd.execute(d -> executeForMethodDescriptor(request, mtd), allCallbacksRan);
         }
 
     }
@@ -187,7 +185,6 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     private Optional<TestCaseReport> getReport() {
         return Optional.ofNullable(report);
     }
-
 
 
 }

@@ -2,37 +2,12 @@ package io.github.imagineDevit.giwt.core.utils;
 
 /**
  * This class contains utility methods that are used to format text in the console.
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
+@SuppressWarnings("unused")
 public class TextUtils {
-
-    enum U {
-        ITALIC("\033[3m", "\033[0m"),
-        BOLD("\u001B[1m", "\u001B[0m"),
-
-        GREEN("\u001B[32m", "\u001B[0m"),
-        BLUE("\u001B[34m", "\u001B[0m"),
-
-        PURPLE("\u001B[35m", "\u001B[0m"),
-        YELLOW("\u001B[33m", "\u001B[0m"),
-
-        RED("\u001B[31m", "\u001B[0m"),
-
-        BACKGROUND_CYAN("\u001B[46m", "\u001B[0m");
-
-        final String on;
-        final String off;
-
-        U(String on, String off) {
-            this.on = on;
-            this.off = off;
-        }
-
-        public String transform(String text){
-            return on + text + off;
-        }
-    }
 
     public static String bold(String text) {
         return U.BOLD.transform(text);
@@ -64,6 +39,33 @@ public class TextUtils {
 
     public static String bg(String text) {
         return U.BACKGROUND_CYAN.transform(text);
+    }
+
+    enum U {
+        ITALIC("\033[3m", "\033[0m"),
+        BOLD("\u001B[1m", "\u001B[0m"),
+
+        GREEN("\u001B[32m", "\u001B[0m"),
+        BLUE("\u001B[34m", "\u001B[0m"),
+
+        PURPLE("\u001B[35m", "\u001B[0m"),
+        YELLOW("\u001B[33m", "\u001B[0m"),
+
+        RED("\u001B[31m", "\u001B[0m"),
+
+        BACKGROUND_CYAN("\u001B[46m", "\u001B[0m");
+
+        final String on;
+        final String off;
+
+        U(String on, String off) {
+            this.on = on;
+            this.off = off;
+        }
+
+        public String transform(String text) {
+            return on + text + off;
+        }
     }
 
 }

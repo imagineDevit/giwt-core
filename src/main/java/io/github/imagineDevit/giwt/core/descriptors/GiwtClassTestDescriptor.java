@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 /**
  * A descriptor for a <strong>giwt</strong> test class
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

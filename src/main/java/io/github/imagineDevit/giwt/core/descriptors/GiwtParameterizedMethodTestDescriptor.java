@@ -18,6 +18,7 @@ import static io.github.imagineDevit.giwt.core.utils.Utils.*;
 
 /**
  * A descriptor for a <strong>giwt</strong> parameterized test method
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

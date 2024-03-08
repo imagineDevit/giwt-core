@@ -23,6 +23,7 @@ import static io.github.imagineDevit.giwt.core.utils.Utils.*;
 
 /**
  * A descriptor for a <strong>giwt</strong> test method
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
@@ -109,7 +110,7 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
         return params;
     }
 
-    public  <TC extends ATestCase<?, ?>> TC getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TC> createTestCase, Function<TC, String> getName) {
+    public <TC extends ATestCase<?, ?, ?, ?>> TC getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TC> createTestCase, Function<TC, String> getName) {
         String name;
         if (params == null) {
             name = Utils.getTestName(this.testMethod.getAnnotation(Test.class).value(), this.testMethod);

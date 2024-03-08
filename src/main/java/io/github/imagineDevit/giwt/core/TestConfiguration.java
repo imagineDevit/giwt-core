@@ -10,10 +10,9 @@ import java.util.Set;
 /**
  * Test configuration class
  *
- * @see ConfigureWith
- *
- * @since 0.0.1
  * @author Henri Joel SEDJAME
+ * @see ConfigureWith
+ * @since 0.0.1
  */
 public interface TestConfiguration {
 
@@ -23,7 +22,7 @@ public interface TestConfiguration {
         return Set.of();
     }
 
-    default Optional<TestParameters<?>> getParameters(String name){
+    default Optional<TestParameters<?>> getParameters(String name) {
         return Optional.ofNullable(parameterSources().get(name));
     }
 }

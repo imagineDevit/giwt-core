@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 /**
  * Exception thrown when a duplicated test names are found
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
@@ -16,7 +17,7 @@ public final class DuplicateTestNameException extends GiwtError {
         super(errorMessage(names));
     }
 
-    private static String errorMessage(List<String> names){
+    private static String errorMessage(List<String> names) {
         String testNames = names.stream()
                 .map(TextUtils::green)
                 .map("'%s'"::formatted)

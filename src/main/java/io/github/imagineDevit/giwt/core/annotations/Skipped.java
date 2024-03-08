@@ -29,12 +29,13 @@ import java.lang.annotation.*;
  *         }
  *     }
  * }
- *</pre>
- *
- *
+ * </pre>
+ * <p>
+ * <p>
  * When a test class or method is marked as skipped using this annotation, it indicates that the test is intentionally excluded from execution due to a specific reason.
  * The reason for skipping the test can be provided using the "reason" attribute of the annotation.
  * Note: Skipped tests should not be considered as failures or ignored tests. They are intentionally excluded from execution and should not be run as part of the test suite.
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

@@ -24,10 +24,10 @@ import java.lang.annotation.*;
  *   // other test methods
  * }</pre>
  *
+ * @author Henri Joel SEDJAME
  * @see BeforeEach
  * @see AfterAll
  * @see AfterEach
- * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.RUNTIME)

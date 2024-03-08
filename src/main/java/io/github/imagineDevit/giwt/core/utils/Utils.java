@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 
 /**
  * This class contains utility methods that are used to run test callbacks, to get test parameters and other utility methods.
- * @since 0.0.1
+ *
  * @author Henri Joel SEDJAME
+ * @since 0.0.1
  */
+@SuppressWarnings("unused")
 public abstract class Utils {
 
     public static final String DASH = "-".repeat(50);
@@ -112,7 +114,7 @@ public abstract class Utils {
         var clazz = method.getDeclaringClass();
         return Optional.ofNullable(clazz.getAnnotation(ConfigureWith.class))
                 .map(ConfigureWith::value)
-                .map( ReflectionUtils::newInstance)
+                .map(ReflectionUtils::newInstance)
                 .orElse(null);
     }
 
@@ -165,10 +167,10 @@ public abstract class Utils {
     public static <S> S runIfOpen(boolean closed, Supplier<S> fn, Runnable close) {
         if (closed) {
             throw new IllegalStateException("""
-                                       \s
-                    Test case is already closed.
-                    A test case can only be run once.
-                   \s""");
+                                        \s
+                     Test case is already closed.
+                     A test case can only be run once.
+                    \s""");
         }
         close.run();
         return fn.get();
@@ -236,7 +238,7 @@ public abstract class Utils {
                     if (callbackClazz.isAssignableFrom(clazz)) {
                         ReflectionUtils.findMethod(clazz, callbackMethod)
                                 .ifPresent(method ->
-                                            map.put(ReflectionUtils.newInstance(clazz), Collections.singletonList(method))
+                                        map.put(ReflectionUtils.newInstance(clazz), Collections.singletonList(method))
                                 );
                     }
                 });

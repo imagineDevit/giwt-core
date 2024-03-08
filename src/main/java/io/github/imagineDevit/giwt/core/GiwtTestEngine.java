@@ -12,15 +12,14 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 /**
  * Giwt test engine
  *
- * @see TestEngine
  * @param <TC>
  * @param <E>
+ * @see TestEngine
  */
-public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExecutor<TC>> implements TestEngine {
-
-    private final E executor;
+public abstract class GiwtTestEngine<TC extends ATestCase<?,?,?,?>, E extends GiwtTestExecutor<TC>> implements TestEngine {
 
     public static final String ENGINE_ID = "giwt-test-engine";
+    private final E executor;
 
     protected GiwtTestEngine(E executor) {
         this.executor = executor;
@@ -54,7 +53,7 @@ public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExe
     @Override
     public void execute(ExecutionRequest executionRequest) {
         TestDescriptor root = executionRequest.getRootTestDescriptor();
-       this.executor.execute(executionRequest, root);
+        this.executor.execute(executionRequest, root);
     }
 
 }

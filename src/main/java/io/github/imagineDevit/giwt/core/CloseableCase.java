@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 /**
  * Closeable case
+ *
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */

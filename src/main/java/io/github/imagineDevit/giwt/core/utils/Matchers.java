@@ -14,13 +14,34 @@ import java.util.stream.Collectors;
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
+@SuppressWarnings("unused")
 public class Matchers {
 
-    public static sealed class Result<T> {
+    @SafeVarargs
+    public static <T> Optional<T> match(MatchCase<T>... cases) {
 
-        public boolean isSuccess() {
-            return this instanceof Success;
-        }
+        Map<Boolean, List<MatchCase<T>>> partitions = Arrays.stream(cases)
+                .collect(Collectors.partitioningBy(c -> c.result.get().isSuccess()));
+
+        return partitions.get(true)
+                .stream()
+                .filter(MatchCase::matched)
+                .findFirst()
+                .map(success -> {
+                            partitions.get(false)
+                                    .stream()
+                                    .filter(MatchCase::matched)
+                                    .findFirst()
+                                    .ifPresent(matchCase -> {
+                                        throw new RuntimeException(matchCase.error().orElse("Unknown error"));
+                                    });
+                            return ((Result.Success<T>) success.result.get()).getValue();
+                        }
+                );
+
+    }
+
+    public static sealed class Result<T> {
 
         public static <T> Result<T> success(T value) {
             return new Success<>(value);
@@ -28,6 +49,10 @@ public class Matchers {
 
         public static <T> Result<T> failure(String message) {
             return new Failure<>(message);
+        }
+
+        public boolean isSuccess() {
+            return this instanceof Success;
         }
 
         public static final class Success<T> extends Result<T> {
@@ -43,7 +68,7 @@ public class Matchers {
             }
         }
 
-        public static final class Failure<T> extends Result<T>  {
+        public static final class Failure<T> extends Result<T> {
 
             private final String message;
 
@@ -78,29 +103,5 @@ public class Matchers {
         public Optional<String> error() {
             return result.get().isSuccess() ? Optional.empty() : Optional.of(((Result.Failure<T>) (result.get())).getMessage());
         }
-    }
-
-    @SafeVarargs
-    public static <T> Optional<T> match(MatchCase<T>... cases) {
-
-        Map<Boolean, List<MatchCase<T>>> partitions = Arrays.stream(cases)
-                .collect(Collectors.partitioningBy(c -> c.result.get().isSuccess()));
-
-        return partitions.get(true)
-                .stream()
-                .filter(MatchCase::matched)
-                .findFirst()
-                .map(success -> {
-                            partitions.get(false)
-                                    .stream()
-                                    .filter(MatchCase::matched)
-                                    .findFirst()
-                                    .ifPresent(matchCase -> {
-                                        throw new RuntimeException(matchCase.error().orElse("Unknown error"));
-                                    });
-                            return ((Result.Success<T>) success.result.get()).getValue();
-                        }
-                );
-
     }
 }

@@ -44,11 +44,10 @@ import java.lang.annotation.*;
  *
  * </pre>
  *
+ * @author Henri Joel SEDJAME
  * @see BeforeAll
  * @see BeforeEach
  * @see AfterAll
- *
- * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
 
