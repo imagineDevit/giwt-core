@@ -16,7 +16,8 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
  * @param <E>
  * @see TestEngine
  */
-public abstract class GiwtTestEngine<TC extends ATestCase<?,?,?,?>, E extends GiwtTestExecutor<TC>> implements TestEngine {
+@SuppressWarnings("rawtypes")
+public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExecutor<TC>> implements TestEngine {
 
     public static final String ENGINE_ID = "giwt-test-engine";
     private final E executor;

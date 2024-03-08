@@ -25,7 +25,8 @@ import java.util.Optional;
  * @see GiwtTestEngine
  * @since 0.0.1
  */
-public abstract class GiwtTestExecutor<TC extends ATestCase<?,?,?,?>> {
+@SuppressWarnings("rawtypes")
+public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
     private static Integer NB = null;
     private TestCaseReport report;
