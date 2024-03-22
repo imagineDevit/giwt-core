@@ -2,6 +2,7 @@ package io.github.imagineDevit.giwt.core;
 
 import io.github.imagineDevit.giwt.core.descriptors.GiwtClassTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtMethodTestDescriptor;
+import io.github.imagineDevit.giwt.core.descriptors.GiwtPackageTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtParameterizedMethodTestDescriptor;
 import io.github.imagineDevit.giwt.core.report.ReportProcessor;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
@@ -49,10 +50,12 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof EngineDescriptor) {
-
             initReport();
-
             executeForEngineDescriptor(request, root);
+        }
+
+        if (root instanceof GiwtPackageTestDescriptor) {
+            executeContainer(request, root);
         }
 
         if (root instanceof GiwtClassTestDescriptor ctd) {
@@ -66,7 +69,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof GiwtMethodTestDescriptor mtd) {
-            mtd.execute(d -> executeForMethodDescriptor(request, mtd), allCallbacksRan);
+            mtd.execute(d -> executeForMethodDescriptor(request, d), allCallbacksRan);
         }
 
     }
@@ -148,7 +151,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
                         listener.executionFinished(root, TestExecutionResult.successful());
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
 
                         report.setStatus(TestCaseReport.TestReport.Status.FAILURE);
 
@@ -186,6 +189,5 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     private Optional<TestCaseReport> getReport() {
         return Optional.ofNullable(report);
     }
-
 
 }

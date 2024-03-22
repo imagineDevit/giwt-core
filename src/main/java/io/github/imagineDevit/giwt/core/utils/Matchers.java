@@ -44,10 +44,18 @@ public class Matchers {
     public static sealed class Result<T> {
 
         public static <T> Result<T> success(T value) {
+            return new Success<>(() -> value);
+        }
+
+        public static <T> Result<T> success(Supplier<T> value) {
             return new Success<>(value);
         }
 
         public static <T> Result<T> failure(String message) {
+            return new Failure<>(() -> message);
+        }
+
+        public static <T> Result<T> failure(Supplier<String> message) {
             return new Failure<>(message);
         }
 
@@ -57,27 +65,27 @@ public class Matchers {
 
         public static final class Success<T> extends Result<T> {
 
-            private final T value;
+            private final Supplier<T> value;
 
-            public Success(T value) {
+            public Success(Supplier<T> value) {
                 this.value = value;
             }
 
             public T getValue() {
-                return value;
+                return value.get();
             }
         }
 
         public static final class Failure<T> extends Result<T> {
 
-            private final String message;
+            private final Supplier<String> message;
 
-            public Failure(String message) {
+            public Failure(Supplier<String> message) {
                 this.message = message;
             }
 
             public String getMessage() {
-                return message;
+                return message.get();
             }
         }
     }

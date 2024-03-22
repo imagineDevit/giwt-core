@@ -2,7 +2,7 @@ name: build
 
 on:
   release:
-    types: [published]
+    types: [ published ]
 
 jobs:
   build:
@@ -27,8 +27,7 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
 
-      -
-        name: List keys
+      - name: List keys
         run: gpg --list-keys
 
       - name: Set up JDK 17

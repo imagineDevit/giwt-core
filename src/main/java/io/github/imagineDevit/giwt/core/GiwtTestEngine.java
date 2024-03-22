@@ -1,6 +1,7 @@
 package io.github.imagineDevit.giwt.core;
 
 
+import io.github.imagineDevit.giwt.core.context.GiwtContext;
 import io.github.imagineDevit.giwt.core.utils.SelectorUtils;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.ClassSelector;
@@ -8,6 +9,8 @@ import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.discovery.MethodSelector;
 import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+
+import java.util.HashMap;
 
 /**
  * Giwt test engine
@@ -20,6 +23,9 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExecutor<TC>> implements TestEngine {
 
     public static final String ENGINE_ID = "giwt-test-engine";
+
+    public static final GiwtContext CONTEXT = new GiwtContext(new HashMap<>());
+
     private final E executor;
 
     protected GiwtTestEngine(E executor) {
@@ -34,7 +40,8 @@ public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExe
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest engineDiscoveryRequest, UniqueId uniqueId) {
 
-        EngineDescriptor root = new EngineDescriptor(uniqueId, "GiwtUnitTestEngine");
+        EngineDescriptor root = new EngineDescriptor(uniqueId, "GiwtTestEngine");
+
 
         engineDiscoveryRequest.getSelectorsByType(ClasspathRootSelector.class)
                 .forEach(selector -> SelectorUtils.appendTestInRoot(selector, root));

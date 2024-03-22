@@ -57,5 +57,5 @@ public @interface ParameterSource {
     /**
      * @return the name of the parameter source
      */
-    String value();
+    String value() default "";
 }

@@ -1,4 +1,3 @@
-
 # GIWT-CORE
 
 ---
@@ -13,4 +12,5 @@
 
 ---
 
-This project is a core library for the **Giwt** project. It provides a set of utilities to work with the **Giwt** project.
+This project is a core library for the **Giwt** project. It provides a set of utilities to work with the **Giwt**
+project.

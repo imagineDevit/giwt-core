@@ -34,7 +34,6 @@ public class ReportProcessor {
             target.write(source.readAllBytes());
         }
 
-
         configuration.setDirectoryForTemplateLoading(tempDirectory);
 
         configuration.setDefaultEncoding("UTF-8");

@@ -1,8 +1,9 @@
 package io.github.imagineDevit.giwt.core.descriptors;
 
+import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestConfiguration;
-import io.github.imagineDevit.giwt.core.annotations.*;
-import io.github.imagineDevit.giwt.core.callbacks.*;
+import io.github.imagineDevit.giwt.core.annotations.Test;
+import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
 import io.github.imagineDevit.giwt.core.utils.GiwtPredicates;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -10,7 +11,6 @@ import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -25,56 +25,24 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
 
     private final Object testInstance;
 
-    private final BeforeAllCallback beforeAllCallback;
-
-    private final AfterAllCallback afterAllCallback;
-
-    private final BeforeEachCallback beforeEachCallback;
-
-    private final AfterEachCallback afterEachCallback;
+    private final GiwtCallbacks callbacks;
 
     private final TestConfiguration configuration;
 
-    public GiwtClassTestDescriptor(Class<?> testClass, UniqueId uniqueId) {
+    public GiwtClassTestDescriptor(Object testInstance, UniqueId uniqueId) {
         super(
-                uniqueId.append("class", testClass.getSimpleName()),
-                testClass.getSimpleName(),
-                ClassSource.from(testClass)
+                uniqueId.append("class", testInstance.getClass().getSimpleName()),
+                testInstance.getClass().getSimpleName(),
+                ClassSource.from(testInstance.getClass())
         );
 
-        this.testClass = testClass;
+        this.testClass = testInstance.getClass();
 
-        this.testInstance = ReflectionUtils.newInstance(testClass);
+        this.testInstance = testInstance;
 
-        this.beforeAllCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getBeforeAllMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(BeforeAll.class)).map(BeforeAll::order).orElse(0)
-                );
+        this.callbacks = GiwtTestEngine.CONTEXT.getCallbacks(this.testInstance);
 
-        this.afterAllCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getAfterAllMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(AfterAll.class)).map(AfterAll::order).orElse(0)
-                );
-
-        this.beforeEachCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getBeforeEachMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(BeforeEach.class)).map(BeforeEach::order).orElse(0)
-                );
-
-
-        this.afterEachCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getAfterEachMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(AfterEach.class)).map(AfterEach::order).orElse(0)
-                );
-
-        this.configuration = Optional.ofNullable(testClass.getAnnotation(ConfigureWith.class))
-                .map(ConfigureWith::value)
-                .map(ReflectionUtils::newInstance)
-                .orElse(null);
+        this.configuration = GiwtTestEngine.CONTEXT.getConfiguration(this.testInstance);
 
         addAllChildren();
     }
@@ -89,9 +57,9 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
     }
 
     public void execute(Consumer<GiwtClassTestDescriptor> consumer) {
-        beforeAllCallback.beforeAll();
+        this.callbacks.beforeAllCallback().beforeAll();
         consumer.accept(this);
-        afterAllCallback.afterAll();
+        this.callbacks.afterAllCallback().afterAll();
     }
 
     public boolean shouldBeReported() {
@@ -106,12 +74,15 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
                                 method,
                                 testInstance,
                                 getUniqueId(),
-                                null, new GiwtCallbacks(beforeAllCallback, afterAllCallback, beforeEachCallback, afterEachCallback)))
+                                null))
                 );
 
         ReflectionUtils.findMethods(testClass, GiwtPredicates.isParameterizedMethodTest())
                 .forEach(method ->
-                        addChild(new GiwtParameterizedMethodTestDescriptor(method, Utils.getParameters(method, this.configuration), testInstance, getUniqueId(), new GiwtCallbacks(beforeAllCallback, afterAllCallback, beforeEachCallback, afterEachCallback), this.configuration))
+                        addChild(
+                                new GiwtParameterizedMethodTestDescriptor(method, testInstance, getUniqueId(),
+                                        GiwtTestEngine.CONTEXT.getParameters(testInstance, method))
+                        )
                 );
     }
 }
