@@ -33,7 +33,7 @@ public class Matchers {
                                     .filter(MatchCase::matched)
                                     .findFirst()
                                     .ifPresent(matchCase -> {
-                                        throw new RuntimeException(matchCase.error().orElse("Unknown error"));
+                                        throw matchCase.error().orElse(new IllegalStateException("An error occurred"));
                                     });
                             return ((Result.Success<T>) success.result.get()).getValue();
                         }
@@ -52,15 +52,49 @@ public class Matchers {
         }
 
         public static <T> Result<T> failure(String message) {
-            return new Failure<>(() -> message);
+            return new Failure.WithMessage<>(() -> message);
         }
 
-        public static <T> Result<T> failure(Supplier<String> message) {
-            return new Failure<>(message);
+        public static <T> Result<T> failure(FailureArg arg) {
+            if (arg instanceof FailureArg.StringArg stringArg) {
+                return new Failure.WithMessage<>(stringArg::getMessage);
+            } else if (arg instanceof FailureArg.ExceptionArg exceptionArg) {
+                return new Failure.WithException<>(exceptionArg::getException);
+            }
+            throw new IllegalStateException("Unknown failure argument");
         }
 
         public boolean isSuccess() {
             return this instanceof Success;
+        }
+
+        public static sealed class FailureArg {
+
+            public static final class StringArg extends FailureArg {
+
+                private final Supplier<String> message;
+
+                public StringArg(Supplier<String> message) {
+                    this.message = message;
+                }
+
+                public String getMessage() {
+                    return message.get();
+                }
+            }
+
+            public static final class ExceptionArg extends FailureArg {
+
+                private final Supplier<RuntimeException> exception;
+
+                public ExceptionArg(Supplier<RuntimeException> exception) {
+                    this.exception = exception;
+                }
+
+                public RuntimeException getException() {
+                    return exception.get();
+                }
+            }
         }
 
         public static final class Success<T> extends Result<T> {
@@ -76,16 +110,44 @@ public class Matchers {
             }
         }
 
-        public static final class Failure<T> extends Result<T> {
+        public static abstract sealed class Failure<T> extends Result<T> {
 
-            private final Supplier<String> message;
+            abstract RuntimeException getError();
 
-            public Failure(Supplier<String> message) {
-                this.message = message;
+            public static final class WithMessage<T> extends Failure<T> {
+
+                private final Supplier<String> message;
+
+                public WithMessage(Supplier<String> message) {
+                    this.message = message;
+                }
+
+                public String getMessage() {
+                    return message.get();
+                }
+
+                @Override
+                RuntimeException getError() {
+                    return new IllegalStateException(getMessage());
+                }
             }
 
-            public String getMessage() {
-                return message.get();
+            public static final class WithException<T> extends Failure<T> {
+
+                private final Supplier<RuntimeException> exception;
+
+                public WithException(Supplier<RuntimeException> exception) {
+                    this.exception = exception;
+                }
+
+                public RuntimeException getException() {
+                    return exception.get();
+                }
+
+                @Override
+                RuntimeException getError() {
+                    return getException();
+                }
             }
         }
     }
@@ -108,8 +170,8 @@ public class Matchers {
             return predicate.get();
         }
 
-        public Optional<String> error() {
-            return result.get().isSuccess() ? Optional.empty() : Optional.of(((Result.Failure<T>) (result.get())).getMessage());
+        public Optional<RuntimeException> error() {
+            return result.get().isSuccess() ? Optional.empty() : Optional.of(((Result.Failure<T>) (result.get())).getError());
         }
     }
 }

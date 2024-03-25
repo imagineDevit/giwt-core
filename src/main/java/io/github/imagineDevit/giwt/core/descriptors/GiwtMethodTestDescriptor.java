@@ -3,9 +3,7 @@ package io.github.imagineDevit.giwt.core.descriptors;
 import io.github.imagineDevit.giwt.core.ATestCase;
 import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestParameters;
-import io.github.imagineDevit.giwt.core.annotations.ParameterizedTest;
 import io.github.imagineDevit.giwt.core.annotations.Skipped;
-import io.github.imagineDevit.giwt.core.annotations.Test;
 import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport.TestReport;
@@ -73,9 +71,9 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
     public <TC extends ATestCase<?, ?, ?, ?>> TC getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TC> createTestCase, Function<TC, String> getName) {
         String name;
         if (params == null) {
-            name = Utils.getTestName(this.testMethod.getAnnotation(Test.class).value(), this.testMethod);
+            name = Utils.getTestName(this.testMethod);
         } else {
-            name = Utils.getTestName(this.testMethod.getAnnotation(ParameterizedTest.class).name(), this.testMethod);
+            name = Utils.getTestName(this.testMethod);
         }
 
         report.setStatus(TestReport.Status.SKIPPED);

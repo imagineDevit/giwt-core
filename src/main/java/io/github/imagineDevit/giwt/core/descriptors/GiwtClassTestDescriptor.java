@@ -2,11 +2,8 @@ package io.github.imagineDevit.giwt.core.descriptors;
 
 import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestConfiguration;
-import io.github.imagineDevit.giwt.core.annotations.Test;
 import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
-import io.github.imagineDevit.giwt.core.utils.GiwtPredicates;
 import io.github.imagineDevit.giwt.core.utils.Utils;
-import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
@@ -67,22 +64,24 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
     }
 
     private void addAllChildren() {
-        ReflectionUtils.findMethods(testClass, GiwtPredicates.isMethodTest())
-                .forEach(method ->
-                        addChild(new GiwtMethodTestDescriptor(
-                                Utils.getTestName(method.getAnnotation(Test.class).value(), method),
-                                method,
-                                testInstance,
-                                getUniqueId(),
-                                null))
-                );
-
-        ReflectionUtils.findMethods(testClass, GiwtPredicates.isParameterizedMethodTest())
-                .forEach(method ->
-                        addChild(
-                                new GiwtParameterizedMethodTestDescriptor(method, testInstance, getUniqueId(),
-                                        GiwtTestEngine.CONTEXT.getParameters(testInstance, method))
-                        )
+        GiwtTestEngine.CONTEXT.get(this.testInstance)
+                .testMethods()
+                .forEach(testMethod -> {
+                            var method = testMethod.method();
+                            if (testMethod.isParameterized()) {
+                                addChild(
+                                        new GiwtParameterizedMethodTestDescriptor(method, testInstance, getUniqueId(),
+                                                GiwtTestEngine.CONTEXT.getParameters(testInstance, method))
+                                );
+                            } else {
+                                addChild(new GiwtMethodTestDescriptor(
+                                        Utils.getTestName(method),
+                                        method,
+                                        testInstance,
+                                        getUniqueId(),
+                                        null));
+                            }
+                        }
                 );
     }
 }

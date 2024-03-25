@@ -1,7 +1,6 @@
 package io.github.imagineDevit.giwt.core.utils;
 
 import io.github.imagineDevit.giwt.core.GiwtTestEngine;
-import io.github.imagineDevit.giwt.core.annotations.Test;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtClassTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtMethodTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtPackageTestDescriptor;
@@ -35,7 +34,7 @@ public class SelectorUtils {
         GiwtTestEngine.CONTEXT.add(instance);
 
         if (GiwtPredicates.isTestClass().test(testClass)) {
-            Utils.checkTestNamesDuplication(testClass);
+            Utils.checkTestNamesDuplication(instance);
             root.addChild(new GiwtClassTestDescriptor(instance, root.getUniqueId()));
         } else {
             GiwtTestEngine.CONTEXT.remove(instance);
@@ -45,14 +44,13 @@ public class SelectorUtils {
     public static void appendTestInMethod(Method method, EngineDescriptor root) {
         Class<?> testClass = method.getDeclaringClass();
 
-
         var instance = ReflectionUtils.newInstance(testClass);
 
         GiwtTestEngine.CONTEXT.add(instance);
 
         if (GiwtPredicates.isMethodTest().test(method)) {
             root.addChild(new GiwtMethodTestDescriptor(
-                    Utils.getTestName(method.getAnnotation(Test.class).value(), method),
+                    Utils.getTestName(method),
                     method,
                     instance,
                     root.getUniqueId(),

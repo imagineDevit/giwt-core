@@ -1,15 +1,18 @@
 package io.github.imagineDevit.giwt.core.utils;
 
 
+import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.ParameterizedTest;
 import io.github.imagineDevit.giwt.core.annotations.Test;
+import io.github.imagineDevit.giwt.core.context.GiwtContext;
 import io.github.imagineDevit.giwt.core.errors.DuplicateTestNameException;
 import io.github.imagineDevit.giwt.core.statements.StmtMsg;
-import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -25,9 +28,14 @@ public abstract class Utils {
 
     public static final String DASH = "-".repeat(50);
 
-    public static String getTestName(String name, Method method) {
-        if (name.isEmpty()) return method.getName();
-        else return name;
+    public static String getTestName(Method method) {
+        return Optional.ofNullable(method.getAnnotation(Test.class))
+                .map(Test::value)
+                .filter(s -> !s.isEmpty())
+                .or(() -> Optional.ofNullable(method.getAnnotation(ParameterizedTest.class))
+                        .map(ParameterizedTest::name)
+                        .filter(s -> !s.isEmpty()))
+                .orElse(method.getName());
     }
 
     public static String reportTestCase(String name, List<StmtMsg> givenMsgs, List<StmtMsg> whenMsgs, List<StmtMsg> thenMsgs, TestParameters.Parameter parameters) {
@@ -76,18 +84,6 @@ public abstract class Utils {
         return sb.toString();
     }
 
-    public static <S> S runIfOpen(boolean closed, Supplier<S> fn, Runnable close) {
-        if (closed) {
-            throw new IllegalStateException("""
-                                        \s
-                     Test case is already closed.
-                     A test case can only be run once.
-                    \s""");
-        }
-        close.run();
-        return fn.get();
-    }
-
     @SuppressWarnings("unchecked")
     public static <T, E extends Throwable> Comparable<T> asComparableOrThrow(T value, Supplier<E> eSupplier) throws E {
         if (value instanceof Comparable<?> c) {
@@ -97,8 +93,10 @@ public abstract class Utils {
         }
     }
 
-    public static void checkTestNamesDuplication(Class<?> testClass) {
-        var methods = ReflectionUtils.findMethods(testClass, GiwtPredicates.isMethodTest().or(GiwtPredicates.isParameterizedMethodTest()));
+    public static void checkTestNamesDuplication(Object testInstance) {
+        var methods = GiwtTestEngine.CONTEXT.get(testInstance).testMethods().stream()
+                .map(GiwtContext.TestMethod::method)
+                .toList();
 
         var duplicatedTestNames = findDuplicatedTestNames(methods);
 
@@ -108,17 +106,16 @@ public abstract class Utils {
     }
 
     private static List<String> findDuplicatedTestNames(List<Method> methods) {
-        var testNames = methods.stream()
-                .map(m ->
-                        Optional.ofNullable(m.getAnnotation(Test.class))
-                                .map(Test::value)
-                                .orElseGet(() -> m.getAnnotation(ParameterizedTest.class).name())
-                ).toList();
-
-        return testNames.stream()
-                .distinct()
-                .filter(s -> !s.isEmpty())
-                .filter(s -> testNames.stream().filter(tn -> tn.equals(s)).count() > 1)
+        return methods.stream().map(Utils::getTestName)
+                .reduce(new HashMap<String, Integer>(), (map, name) -> {
+                    map.put(name, map.getOrDefault(name, 0) + 1);
+                    return map;
+                }, (m1, m2) -> {
+                    m1.putAll(m2);
+                    return m1;
+                }).entrySet().stream()
+                .filter(e -> e.getValue() > 1)
+                .map(Map.Entry::getKey)
                 .toList();
     }
 

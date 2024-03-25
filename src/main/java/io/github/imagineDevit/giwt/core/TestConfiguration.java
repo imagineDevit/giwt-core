@@ -13,9 +13,7 @@ import java.util.Set;
  * @since 0.0.1
  */
 public interface TestConfiguration {
-
     default Set<Class<?>> excludeFromReport() {
         return Set.of();
     }
-
 }

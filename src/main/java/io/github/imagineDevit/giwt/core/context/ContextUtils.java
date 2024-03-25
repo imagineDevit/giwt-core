@@ -4,8 +4,7 @@ import io.github.imagineDevit.giwt.core.TestConfiguration;
 import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.*;
 import io.github.imagineDevit.giwt.core.callbacks.*;
-import io.github.imagineDevit.giwt.core.errors.MultipleParamSourcesFoundException;
-import io.github.imagineDevit.giwt.core.errors.NoParamSourceFoundException;
+import io.github.imagineDevit.giwt.core.errors.ParameterSourceException;
 import io.github.imagineDevit.giwt.core.utils.GiwtPredicates;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -74,23 +73,24 @@ public class ContextUtils {
 
         var parameterSource = annotation.source();
 
-        var methods = Optional.of(getParameterSourcesMethods(testClass, parameterSource))
+        var methods = Optional.of(getParameterSourcesMethods(testClass, parameterSource, false))
                 .filter(list -> !list.isEmpty())
                 .orElseGet(() -> {
                     if (configuration != null) {
-                        return getParameterSourcesMethods(configuration.getClass(), parameterSource);
+                        return getParameterSourcesMethods(configuration.getClass(), parameterSource, true);
                     }
                     return Collections.emptyList();
                 });
 
         return switch (methods.size()) {
-            case 0 -> throw new NoParamSourceFoundException(parameterSource);
+            case 0 -> throw new ParameterSourceException(parameterSource, ParameterSourceException.Reasons.NOT_FOUND);
             case 1 -> methods.get(0);
-            default -> throw new MultipleParamSourcesFoundException(parameterSource);
+            default ->
+                    throw new ParameterSourceException(parameterSource, ParameterSourceException.Reasons.MULTIPLE_FOUND);
         };
     }
 
-    private static List<Method> getParameterSourcesMethods(Class<?> clazz, String parameterSource) {
+    private static List<Method> getParameterSourcesMethods(Class<?> clazz, String parameterSource, boolean fromConfiguration) {
 
         Predicate<Method> hasName = method ->
                 Optional.of(method.getAnnotation(ParameterSource.class).value())
@@ -98,7 +98,7 @@ public class ContextUtils {
                         .orElse(method.getName())
                         .equals(parameterSource);
 
-        return ReflectionUtils.findMethods(clazz, (Method m) -> GiwtPredicates.isParameterSource().test(m) && hasName.test(m));
+        return ReflectionUtils.findMethods(clazz, (Method m) -> GiwtPredicates.isParameterSource(fromConfiguration).test(m) && hasName.test(m));
     }
 
     private static void runCallbacks(Map<Object, List<Method>> methods, Function<Method, Integer> order) {

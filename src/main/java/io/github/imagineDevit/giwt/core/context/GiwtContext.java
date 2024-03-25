@@ -60,12 +60,18 @@ public record GiwtContext(Map<Class<?>, ClassCtx> items) {
         var testClass = testInstance.getClass();
         items.putIfAbsent(
                 testClass,
-                new ClassCtx(ContextUtils.getConfiguration(testClass), ContextUtils.getCallbacks(testInstance), new HashMap<>())
+                new ClassCtx(ContextUtils.getConfiguration(testClass), ContextUtils.getCallbacks(testInstance), new HashMap<>(), new ArrayList<>())
         );
     }
 
     public void remove(Object testInstance) {
         items.remove(testInstance.getClass());
+    }
+
+    public void addTestMethod(Class<?> testClass, List<Method> methods, boolean isParameterized) {
+        get(testClass).ifPresent(ctx ->
+                ctx.testMethods.addAll(methods.stream().map(m -> new TestMethod(isParameterized, m)).toList())
+        );
     }
 
     private void addParameters(Object testInstance, Method method, List<? extends TestParameters.Parameter> ps) {
@@ -77,10 +83,16 @@ public record GiwtContext(Map<Class<?>, ClassCtx> items) {
     }
 
     public record ClassCtx(TestConfiguration configuration, GiwtCallbacks callbacks,
-                           Map<String, List<? extends TestParameters.Parameter>> parameters) {
+                           Map<String, List<? extends TestParameters.Parameter>> parameters,
+                           List<TestMethod> testMethods) {
         public ClassCtx {
             parameters = Objects.requireNonNullElse(parameters, new HashMap<>());
+            testMethods = new ArrayList<>();
         }
     }
+
+    public record TestMethod(Boolean isParameterized, Method method) {
+    }
+
 
 }

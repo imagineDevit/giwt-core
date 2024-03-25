@@ -6,6 +6,10 @@ import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.ParameterSource;
 import io.github.imagineDevit.giwt.core.annotations.ParameterizedTest;
 import io.github.imagineDevit.giwt.core.annotations.Test;
+import io.github.imagineDevit.giwt.core.errors.ParameterSourceException;
+import io.github.imagineDevit.giwt.core.errors.ParameterizedTestMethodException;
+import io.github.imagineDevit.giwt.core.errors.TestClassException;
+import io.github.imagineDevit.giwt.core.errors.TestMethodException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.platform.commons.support.AnnotationSupport;
 
@@ -17,12 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static io.github.imagineDevit.giwt.core.errors.TestClassException.Reasons.IS_ABSTRACT;
+import static io.github.imagineDevit.giwt.core.errors.TestClassException.Reasons.IS_PRIVATE;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.MatchCase.matchCase;
+import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.FailureArg.ExceptionArg;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.failure;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.success;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.match;
+import static io.github.imagineDevit.giwt.core.utils.TextUtils.*;
 import static org.junit.platform.commons.util.ReflectionUtils.*;
 
 /**
@@ -33,15 +42,18 @@ import static org.junit.platform.commons.util.ReflectionUtils.*;
  */
 public class GiwtPredicates {
 
+    private static final Function<Class<?>, String> className = clazz -> bold(green(clazz.getSimpleName()));
+    private static final Function<Method, String> methodName = method -> bold(blue(method.getName()));
+
     public static Predicate<Class<?>> hasTestMethods() {
         return clazz -> match(
                 matchCase(
                         () -> isAbstract(clazz),
-                        () -> failure("No support for abstract classes " + clazz.getSimpleName())
+                        () -> failure(new ExceptionArg(() -> new TestClassException(className.apply(clazz), IS_ABSTRACT)))
                 ),
                 matchCase(
                         () -> isPrivate(clazz),
-                        () -> failure("No support for private classes " + clazz.getSimpleName())
+                        () -> failure(new ExceptionArg(() -> new TestClassException(className.apply(clazz), IS_PRIVATE)))
                 ),
                 matchCase(
                         () -> !findMethods(clazz, m -> AnnotationSupport.isAnnotated(m, Test.class)
@@ -55,14 +67,20 @@ public class GiwtPredicates {
         return clazz -> match(
                 matchCase(
                         () -> isAbstract(clazz),
-                        () -> failure("No support for abstract classes " + clazz.getSimpleName())
+                        () -> failure(new ExceptionArg(() -> new TestClassException(className.apply(clazz), IS_ABSTRACT)))
                 ),
                 matchCase(
                         () -> isPrivate(clazz),
-                        () -> failure("No support for private classes " + clazz.getSimpleName())
+                        () -> failure(new ExceptionArg(() -> new TestClassException(className.apply(clazz), IS_PRIVATE)))
                 ),
                 matchCase(
-                        () -> !findMethods(clazz, m -> isTestMethod(m) || isParameterizedTestMethod(m)).isEmpty(),
+                        () -> {
+                            var testMethods = findMethods(clazz, GiwtPredicates::isTestMethod);
+                            GiwtTestEngine.CONTEXT.addTestMethod(clazz, testMethods, false);
+                            var parameterizedTestMethods = findMethods(clazz, GiwtPredicates::isParameterizedTestMethod);
+                            GiwtTestEngine.CONTEXT.addTestMethod(clazz, parameterizedTestMethods, true);
+                            return !testMethods.isEmpty() || !parameterizedTestMethods.isEmpty();
+                        },
                         () -> success(Boolean.TRUE)
                 )
         ).orElse(false);
@@ -72,15 +90,15 @@ public class GiwtPredicates {
         return method -> match(
                 matchCase(
                         () -> isStatic(method),
-                        () -> failure("No support for static methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_STATIC)))
                 ),
                 matchCase(
                         () -> isPrivate(method),
-                        () -> failure("No support for private methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_PRIVATE)))
                 ),
                 matchCase(
                         () -> isAbstract(method),
-                        () -> failure("No support for abstract methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_ABSTRACT)))
                 ),
                 matchCase(() -> isTestMethod(method), () -> success(Boolean.TRUE))
         ).orElse(false);
@@ -90,25 +108,29 @@ public class GiwtPredicates {
         return method -> match(
                 matchCase(
                         () -> isStatic(method),
-                        () -> failure("No support for static methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_STATIC)))
                 ),
                 matchCase(
                         () -> isPrivate(method),
-                        () -> failure("No support for private methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_PRIVATE)))
                 ),
                 matchCase(
                         () -> isAbstract(method),
-                        () -> failure("No support for abstract methods " + method.getName())
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.IS_ABSTRACT)))
                 ),
                 matchCase(() -> isParameterizedTestMethod(method), () -> success(Boolean.TRUE))
         ).orElse(false);
     }
 
-    public static Predicate<Method> isParameterSource() {
+    public static Predicate<Method> isParameterSource(boolean shouldBePublic) {
         return method -> match(
                 matchCase(
                         () -> !method.getReturnType().isAssignableFrom(TestParameters.class),
-                        () -> failure("Method annotated with %s should return object of type %s".formatted(TextUtils.blue("@ParameterSource"), TextUtils.green("TestParameters<?>")))
+                        () -> failure(new ExceptionArg(() -> new ParameterSourceException(methodName.apply(method), ParameterSourceException.Reasons.DO_NOT_RETURN_VOID)))
+                ),
+                matchCase(
+                        () -> shouldBePublic && !isPublic(method),
+                        () -> failure(new ExceptionArg(() -> new ParameterSourceException(methodName.apply(method), ParameterSourceException.Reasons.IS_NOT_PUBLIC)))
                 ),
                 matchCase(
                         () -> AnnotationSupport.isAnnotated(method, ParameterSource.class),
@@ -121,14 +143,16 @@ public class GiwtPredicates {
         return match(
                 matchCase(
                         () -> method.getParameterCount() != 1,
-                        () -> failure("Test method (%s) should have one argument of type %s".formatted(TextUtils.blue(method.getName()), TextUtils.purple("TestCase")))),
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.DO_NOT_HAVE_EXACTLY_ONE_ARG)))
+                ),
                 matchCase(
                         () -> !ATestCase.class.isAssignableFrom(method.getParameterTypes()[0]),
-                        () -> failure("Missing argument of type %s for test method %s.".formatted(TextUtils.purple("TestCase"), TextUtils.blue(method.getName())))
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.HAS_BAD_ARG_TYPE)))
                 ),
                 matchCase(
                         () -> !method.getReturnType().equals(Void.TYPE),
-                        () -> failure("Test method should return void")),
+                        () -> failure(new ExceptionArg(() -> new TestMethodException(methodName.apply(method), TestMethodException.Reasons.DO_NOT_RETURN_VOID)))
+                ),
                 matchCase(
                         () -> AnnotationSupport.isAnnotated(method, Test.class),
                         () -> success(Boolean.TRUE))
@@ -142,21 +166,19 @@ public class GiwtPredicates {
         final AtomicReference<Type[]> pTypes = new AtomicReference<>();
         final AtomicBoolean methodSourceFound = new AtomicBoolean(false);
 
-        final String methodName = TextUtils.blue(method.getName());
-
         return match(
                 matchCase(
                         () -> method.getAnnotation(ParameterizedTest.class).source().isEmpty(),
-                        () -> failure("%s source should not be empty".formatted(TextUtils.blue("@ParameterizedTest"))
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.HAS_EMPTY_PARAM_SOURCE))
                         )
                 ),
                 matchCase(
                         () -> method.getParameterCount() <= 1,
-                        () -> failure("Parameterized method test %s should have more than one argument".formatted(methodName))
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.DO_NOT_HAVE_MORE_THAN_ONE_ARG)))
                 ),
                 matchCase(
                         () -> !ATestCase.class.isAssignableFrom(allArgs[0]),
-                        () -> failure("The first argument of the test method (%s) should be of type %s.".formatted(methodName, TextUtils.purple("TestCase")))
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.HAS_BAD_FIRST_ARG_TYPE)))
                 ),
                 matchCase(
                         () -> {
@@ -178,8 +200,8 @@ public class GiwtPredicates {
                             return !methodSourceFound.get() || pt.length != methodParamTypes.get().length;
                         },
                         () -> methodSourceFound.get()
-                                ? failure(() -> "Test method %s expected to have <%d>  but got <%d> arguments".formatted(methodName, pTypes.get().length + 1, methodParamTypes.get().length + 1))
-                                : failure(() -> "No parameter source found with name %s".formatted(TextUtils.blue(method.getAnnotation(ParameterizedTest.class).source())))
+                                ? failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), pTypes.get(), methodParamTypes.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_NUMBER)))
+                                : failure(new ExceptionArg(() -> new ParameterSourceException(method.getAnnotation(ParameterizedTest.class).source(), ParameterSourceException.Reasons.NOT_FOUND)))
                 ),
                 matchCase(
                         () -> {
@@ -192,12 +214,11 @@ public class GiwtPredicates {
                             }
                             return false;
                         },
-                        () -> failure(() -> "Test method %s expected to have arguments of types : %s  but got %s".formatted(methodName, TextUtils.bold(Arrays.toString(pTypes.get())), TextUtils.bold(Arrays.toString(methodParamTypes.get())))
-                        )
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), pTypes.get(), methodParamTypes.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_TYPES)))
                 ),
                 matchCase(
                         () -> !method.getReturnType().equals(Void.TYPE),
-                        () -> failure("Test method should return void")
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.DO_NOT_RETURN_VOID)))
                 ),
                 matchCase(
                         () -> AnnotationSupport.isAnnotated(method, ParameterizedTest.class),
