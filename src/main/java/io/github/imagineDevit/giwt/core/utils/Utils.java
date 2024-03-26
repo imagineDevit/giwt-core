@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public abstract class Utils {
 
-    public static final String DASH = "-".repeat(50);
+    public static final String DASH = ".".repeat(45);
 
     public static String getTestName(Method method) {
         return Optional.ofNullable(method.getAnnotation(Test.class))
@@ -55,8 +55,7 @@ public abstract class Utils {
                 """
                         %s
                         %s
-                        %s
-                        """.formatted(DASH, title, DASH)
+                        """.formatted(DASH, title)
         );
 
         if (!givenMsg.isEmpty()) {
@@ -77,9 +76,9 @@ public abstract class Utils {
                     """.formatted(thenMsg));
         }
 
-        sb.append("""
-                %s
-                """.formatted(DASH));
+        //sb.append("""
+        //        %s
+        //        """.formatted(DASH));
 
         return sb.toString();
     }

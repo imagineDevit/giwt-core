@@ -12,18 +12,23 @@ public record ClassCtx<T>(
         TestConfiguration configuration,
         GiwtCallbacks callbacks,
         Map<String, List<? extends TestParameters.Parameter>> parameters,
-        List<TestMethod> testMethods) {
+        Set<TestMethod> testMethods) {
 
     public ClassCtx {
         Objects.requireNonNull(instance);
         parameters = Objects.requireNonNullElse(parameters, new HashMap<>());
-        testMethods = Objects.requireNonNullElse(testMethods, new ArrayList<>());
+        testMethods = Objects.requireNonNullElse(testMethods, new TreeSet<>());
     }
 
-    public record TestMethod(Boolean isParameterized, Method method) {
+    public record TestMethod(Boolean isParameterized, Method method) implements Comparable<TestMethod> {
         public TestMethod {
             Objects.requireNonNull(isParameterized);
             Objects.requireNonNull(method);
+        }
+
+        @Override
+        public int compareTo(TestMethod o) {
+            return this.method.getName().compareTo(o.method.getName());
         }
     }
 }

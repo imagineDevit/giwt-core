@@ -57,14 +57,14 @@ public record GiwtContext(Map<Class<?>, ClassCtx<?>> items) {
         var testInstance = ReflectionUtils.newInstance(testClass);
         items.putIfAbsent(
                 testClass,
-                new ClassCtx<>(testInstance, ContextUtils.getConfiguration(testClass), ContextUtils.getCallbacks(testInstance), new HashMap<>(), new ArrayList<>())
+                new ClassCtx<>(testInstance, ContextUtils.getConfiguration(testClass), ContextUtils.getCallbacks(testInstance), new HashMap<>(), new TreeSet<>())
         );
     }
 
     public void add(Object testInstance) {
         items.putIfAbsent(
                 testInstance.getClass(),
-                new ClassCtx<>(testInstance, ContextUtils.getConfiguration(testInstance.getClass()), ContextUtils.getCallbacks(testInstance), new HashMap<>(), new ArrayList<>())
+                new ClassCtx<>(testInstance, ContextUtils.getConfiguration(testInstance.getClass()), ContextUtils.getCallbacks(testInstance), new HashMap<>(), new TreeSet<>())
         );
     }
 

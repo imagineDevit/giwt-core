@@ -126,7 +126,9 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
         TestCaseReport.TestReport report = new TestCaseReport.TestReport();
 
-        TC testCase = root.getTestCase(report, this::createTestCase, ATestCase::getName);
+        TC testCase = root.getTestCase(report,
+                (n) -> (r, p) -> this.createTestCase(n, r, p),
+                ATestCase::getName);
 
         EngineExecutionListener listener = request.getEngineExecutionListener();
 

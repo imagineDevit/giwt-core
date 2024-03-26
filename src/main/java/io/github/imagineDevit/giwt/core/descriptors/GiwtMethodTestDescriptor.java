@@ -8,7 +8,6 @@ import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport.TestReport;
 import io.github.imagineDevit.giwt.core.utils.Utils;
-import org.assertj.core.util.TriFunction;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -16,6 +15,7 @@ import org.junit.platform.engine.support.descriptor.MethodSource;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -61,7 +61,7 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
         return params;
     }
 
-    public <TC extends ATestCase<?, ?, ?, ?>> TC getTestCase(TestCaseReport.TestReport report, TriFunction<String, TestReport, TestParameters.Parameter, TC> createTestCase, Function<TC, String> getName) {
+    public <TC extends ATestCase<?, ?, ?, ?>> TC getTestCase(TestCaseReport.TestReport report, Function<String, BiFunction<TestReport, TestParameters.Parameter, TC>> createTestCase, Function<TC, String> getName) {
         String name;
         if (params == null) {
             name = Utils.getTestName(this.testMethod);
@@ -71,7 +71,7 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
 
         report.setStatus(TestReport.Status.SKIPPED);
 
-        TC tc = createTestCase.apply(name, report, getParams());
+        TC tc = createTestCase.apply(name).apply(report, params);
 
         report.setName(getName.apply(tc));
 

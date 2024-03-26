@@ -22,7 +22,10 @@ public class SelectorUtils {
 
     public static void appendTestInRoot(ClasspathRootSelector selector, EngineDescriptor root, List<Predicate<String>> predicates) {
         ReflectionUtils
-                .findAllClassesInClasspathRoot(selector.getClasspathRoot(), GiwtPredicates.hasTestMethods(), (name) -> predicates.stream().anyMatch(p -> p.test(name)))
+                .findAllClassesInClasspathRoot(selector.getClasspathRoot(), GiwtPredicates.hasTestMethods(), (name) -> {
+                    if (predicates.isEmpty()) return true;
+                    return predicates.stream().anyMatch(p -> p.test(name));
+                })
                 .forEach(testClass -> appendTestInClass(testClass, root));
     }
 
