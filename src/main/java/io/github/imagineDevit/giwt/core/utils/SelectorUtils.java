@@ -3,13 +3,14 @@ package io.github.imagineDevit.giwt.core.utils;
 import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtClassTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtMethodTestDescriptor;
-import io.github.imagineDevit.giwt.core.descriptors.GiwtPackageTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtParameterizedMethodTestDescriptor;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.discovery.ClasspathRootSelector;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * This class contains utility methods that are used to append tests to the root of the engine descriptor.
@@ -19,14 +20,10 @@ import java.lang.reflect.Method;
  */
 public class SelectorUtils {
 
-    public static void appendTestInRoot(ClasspathRootSelector selector, EngineDescriptor root) {
+    public static void appendTestInRoot(ClasspathRootSelector selector, EngineDescriptor root, List<Predicate<String>> predicates) {
         ReflectionUtils
-                .findAllClassesInClasspathRoot(selector.getClasspathRoot(), GiwtPredicates.hasTestMethods(), (name) -> true)
+                .findAllClassesInClasspathRoot(selector.getClasspathRoot(), GiwtPredicates.hasTestMethods(), (name) -> predicates.stream().anyMatch(p -> p.test(name)))
                 .forEach(testClass -> appendTestInClass(testClass, root));
-    }
-
-    public static void appendTestInPackage(String packageName, EngineDescriptor root) {
-        root.addChild(new GiwtPackageTestDescriptor(root.getUniqueId(), packageName));
     }
 
     public static void appendTestInClass(Class<?> testClass, EngineDescriptor root) {

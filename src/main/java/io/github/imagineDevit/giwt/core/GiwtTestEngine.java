@@ -4,13 +4,12 @@ package io.github.imagineDevit.giwt.core;
 import io.github.imagineDevit.giwt.core.context.GiwtContext;
 import io.github.imagineDevit.giwt.core.utils.SelectorUtils;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.ClassSelector;
-import org.junit.platform.engine.discovery.ClasspathRootSelector;
-import org.junit.platform.engine.discovery.MethodSelector;
-import org.junit.platform.engine.discovery.PackageSelector;
+import org.junit.platform.engine.discovery.*;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Giwt test engine
@@ -40,14 +39,14 @@ public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExe
     @Override
     public TestDescriptor discover(EngineDiscoveryRequest engineDiscoveryRequest, UniqueId uniqueId) {
 
+
         EngineDescriptor root = new EngineDescriptor(uniqueId, "GiwtTestEngine");
 
+        List<Predicate<String>> predicates = engineDiscoveryRequest.getFiltersByType(PackageNameFilter.class)
+                .stream().map(Filter::toPredicate).toList();
 
         engineDiscoveryRequest.getSelectorsByType(ClasspathRootSelector.class)
-                .forEach(selector -> SelectorUtils.appendTestInRoot(selector, root));
-
-        engineDiscoveryRequest.getSelectorsByType(PackageSelector.class)
-                .forEach(selector -> SelectorUtils.appendTestInPackage(selector.getPackageName(), root));
+                .forEach(selector -> SelectorUtils.appendTestInRoot(selector, root, predicates));
 
         engineDiscoveryRequest.getSelectorsByType(ClassSelector.class)
                 .forEach(selector -> SelectorUtils.appendTestInClass(selector.getJavaClass(), root));

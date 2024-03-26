@@ -2,7 +2,6 @@ package io.github.imagineDevit.giwt.core;
 
 import io.github.imagineDevit.giwt.core.descriptors.GiwtClassTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtMethodTestDescriptor;
-import io.github.imagineDevit.giwt.core.descriptors.GiwtPackageTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtParameterizedMethodTestDescriptor;
 import io.github.imagineDevit.giwt.core.report.ReportProcessor;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
@@ -54,14 +53,12 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
             executeForEngineDescriptor(request, root);
         }
 
-        if (root instanceof GiwtPackageTestDescriptor) {
-            executeContainer(request, root);
-        }
-
         if (root instanceof GiwtClassTestDescriptor ctd) {
-            allCallbacksRan = true;
-            ctd.execute(d -> executeForClassDescriptor(request, d));
-            allCallbacksRan = false;
+            ctd.execute(
+                    () -> allCallbacksRan = true,
+                    d -> executeForClassDescriptor(request, d),
+                    () -> allCallbacksRan = false
+            );
         }
 
         if (root instanceof GiwtParameterizedMethodTestDescriptor) {
@@ -96,7 +93,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     }
 
     private void executeForClassDescriptor(ExecutionRequest request, GiwtClassTestDescriptor r) {
-        TestCaseReport.ClassReport classReport = new TestCaseReport.ClassReport(r.getTestClass().getName());
+        TestCaseReport.ClassReport classReport = r.createReport();
         if (r.shouldBeReported()) {
             getReport().ifPresent(tc -> tc.addClassReport(classReport));
         }

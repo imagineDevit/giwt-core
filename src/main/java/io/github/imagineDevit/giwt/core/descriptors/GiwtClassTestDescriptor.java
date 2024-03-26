@@ -3,6 +3,7 @@ package io.github.imagineDevit.giwt.core.descriptors;
 import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestConfiguration;
 import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
+import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -49,14 +50,18 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
         return Type.CONTAINER;
     }
 
-    public Class<?> getTestClass() {
-        return testClass;
+    public TestCaseReport.ClassReport createReport() {
+        return new TestCaseReport.ClassReport(this.testClass.getName());
     }
 
-    public void execute(Consumer<GiwtClassTestDescriptor> consumer) {
+
+    public void execute(Runnable before, Consumer<GiwtClassTestDescriptor> consumer, Runnable after) {
+        before.run();
         this.callbacks.beforeAllCallback().beforeAll();
         consumer.accept(this);
         this.callbacks.afterAllCallback().afterAll();
+        GiwtTestEngine.CONTEXT.remove(this.testInstance);
+        after.run();
     }
 
     public boolean shouldBeReported() {
