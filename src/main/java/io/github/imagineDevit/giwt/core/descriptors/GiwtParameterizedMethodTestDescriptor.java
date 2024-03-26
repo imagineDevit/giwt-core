@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescriptor {
 
-    public GiwtParameterizedMethodTestDescriptor(Method testMethod, Object testInstance, UniqueId uniqueId, List<? extends TestParameters.Parameter> parameters) {
+    public GiwtParameterizedMethodTestDescriptor(Method testMethod, UniqueId uniqueId, List<? extends TestParameters.Parameter> parameters) {
 
         super(
                 uniqueId.append("method", testMethod.getName()),
@@ -25,7 +25,7 @@ public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescripto
                 MethodSource.from(testMethod)
         );
 
-        addAllChildren(testMethod, testInstance, parameters);
+        addAllChildren(testMethod, parameters);
     }
 
     @Override
@@ -33,10 +33,10 @@ public class GiwtParameterizedMethodTestDescriptor extends AbstractTestDescripto
         return Type.CONTAINER;
     }
 
-    private void addAllChildren(Method testMethod, Object testInstance, List<? extends TestParameters.Parameter> parameters) {
+    private void addAllChildren(Method testMethod, List<? extends TestParameters.Parameter> parameters) {
         parameters.forEach(param -> {
             String name = param.formatName(testMethod.getAnnotation(ParameterizedTest.class).name());
-            addChild(new GiwtMethodTestDescriptor(name, testMethod, testInstance, getUniqueId(), param));
+            addChild(new GiwtMethodTestDescriptor(name, testMethod, getUniqueId(), param));
         });
     }
 }

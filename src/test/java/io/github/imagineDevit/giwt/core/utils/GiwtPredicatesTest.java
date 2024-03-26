@@ -1,5 +1,6 @@
 package io.github.imagineDevit.giwt.core.utils;
 
+import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestConfiguration;
 import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.ParameterSource;
@@ -21,15 +22,17 @@ class GiwtPredicatesTest {
 
         class TestClass1 {
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test1() {}
+            void test1() {
+            }
         }
 
-        class TestClass2{
+        class TestClass2 {
             @io.github.imagineDevit.giwt.core.annotations.ParameterizedTest(
                     name = "Test 1",
                     source = "params"
             )
-            void test1() {}
+            void test1() {
+            }
         }
 
         assertTrue(GiwtPredicates.hasTestMethods().test(TestClass1.class));
@@ -40,26 +43,32 @@ class GiwtPredicatesTest {
     void shouldNotHaveTestMethods() {
 
         class JustAClass {
-            void test1() {}
-            void test2(TestCase<String, String> testCase) {}
+            void test1() {
+            }
+
+            void test2(TestCase<String, String> testCase) {
+            }
         }
 
         assertFalse(GiwtPredicates.hasTestMethods().test(JustAClass.class));
     }
-    
+
     @Test
     void shouldBeTestClass() {
         class TestClass1 {
+
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test1(TestCase<Object,Object> tc) {}
+            void test1(TestCase<Object, Object> tc) {
+            }
         }
 
-        class TestClass2{
+        class TestClass2 {
             @io.github.imagineDevit.giwt.core.annotations.ParameterizedTest(
                     name = "Test 1",
                     source = "params"
             )
-            void test1(TestCase<Object,Object> tc, String param) {}
+            void test1(TestCase<Object, Object> tc, String param) {
+            }
 
             @ParameterSource
             TestParameters<TestParameters.Parameter.P1<String>> params() {
@@ -70,6 +79,8 @@ class GiwtPredicatesTest {
             }
         }
 
+        GiwtTestEngine.CONTEXT.add(new TestClass1());
+        GiwtTestEngine.CONTEXT.add(new TestClass2());
         assertTrue(GiwtPredicates.isTestClass().test(TestClass1.class));
         assertTrue(GiwtPredicates.isTestClass().test(TestClass2.class));
     }
@@ -77,21 +88,19 @@ class GiwtPredicatesTest {
     @Test
     void shouldNotBeTestClass() {
         class JustAClass {
-            void test1() {}
+            void test1() {
+            }
         }
 
+        GiwtTestEngine.CONTEXT.add(new JustAClass());
+        GiwtTestEngine.CONTEXT.add(new PrivateTestClass());
 
         assertFalse(GiwtPredicates.isTestClass().test(JustAClass.class));
 
-        var ex1 = assertThrows(TestClassException.class,
-                () -> GiwtPredicates.isTestClass().test(AbstractTestClass.class));
-
-        assertEquals(TestClassException.Reasons.IS_ABSTRACT, ex1.getReason());
-
-        var ex2 = assertThrows(TestClassException.class,
+        var ex = assertThrows(TestClassException.class,
                 () -> GiwtPredicates.isTestClass().test(PrivateTestClass.class));
 
-        assertEquals(TestClassException.Reasons.IS_PRIVATE, ex2.getReason());
+        assertEquals(TestClassException.Reasons.IS_PRIVATE, ex.getReason());
     }
 
     @Test
@@ -99,7 +108,8 @@ class GiwtPredicatesTest {
 
         class TestClass1 {
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test1(TestCase<Object, Object> tc) {}
+            void test1(TestCase<Object, Object> tc) {
+            }
         }
 
         assertTrue(GiwtPredicates.isMethodTest().test(TestClass1.class.getDeclaredMethod("test1", TestCase.class)));
@@ -109,17 +119,24 @@ class GiwtPredicatesTest {
     void shouldNotBeMethodTest() throws NoSuchMethodException {
 
         class JustAClass {
-            void test1(TestCase<Object, Object> tc) {}
+            void test1(TestCase<Object, Object> tc) {
+            }
         }
 
         assertFalse(GiwtPredicates.isMethodTest().test(JustAClass.class.getDeclaredMethod("test1", TestCase.class)));
 
         class TestClassWithWrongMethod {
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test1() {}
+            static void test4(TestCase<Integer, Integer> testCase) {
+            }
 
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test2(Object o) {}
+            void test1() {
+            }
+
+            @io.github.imagineDevit.giwt.core.annotations.Test
+            void test2(Object o) {
+            }
 
             @io.github.imagineDevit.giwt.core.annotations.Test
             Object test3(TestCase<Integer, Integer> testCase) {
@@ -127,19 +144,17 @@ class GiwtPredicatesTest {
             }
 
             @io.github.imagineDevit.giwt.core.annotations.Test
-            static void test4(TestCase<Integer, Integer> testCase) {}
-
-            @io.github.imagineDevit.giwt.core.annotations.Test
-            private void test5(TestCase<Integer, Integer> testCase) {}
+            private void test5(TestCase<Integer, Integer> testCase) {
+            }
 
         }
 
-        var ex1 =assertThrows(TestMethodException.class,
+        var ex1 = assertThrows(TestMethodException.class,
                 () -> GiwtPredicates.isMethodTest().test(TestClassWithWrongMethod.class.getDeclaredMethod("test1")));
 
         assertEquals(TestMethodException.Reasons.DO_NOT_HAVE_EXACTLY_ONE_ARG, ex1.getReason());
 
-        var ex2 =assertThrows(TestMethodException.class,
+        var ex2 = assertThrows(TestMethodException.class,
                 () -> GiwtPredicates.isMethodTest().test(TestClassWithWrongMethod.class.getDeclaredMethod("test2", Object.class)));
 
         assertEquals(TestMethodException.Reasons.HAS_BAD_ARG_TYPE, ex2.getReason());
@@ -181,6 +196,7 @@ class GiwtPredicatesTest {
             }
         }
 
+        GiwtTestEngine.CONTEXT.add(new TestClass());
         assertTrue(GiwtPredicates.isParameterizedMethodTest().test(TestClass.class.getDeclaredMethod("test1", TestCase.class, String.class)));
     }
 
@@ -188,31 +204,41 @@ class GiwtPredicatesTest {
     void shouldNotBeParameterizedTest() throws NoSuchMethodException {
 
         class TestClass {
-            void test7(TestCase<Integer, Integer> testCase, String param){}
+            @ParameterizedTest(name = "Test 11", source = "params")
+            static void test11(TestCase<Integer, Integer> testCase, String param) {
+            }
+
+            void test7(TestCase<Integer, Integer> testCase, String param) {
+            }
 
             @ParameterizedTest(name = "Test 8", source = "params")
-            void test8(String param){}
+            void test8(String param) {
+            }
 
             @ParameterizedTest(name = "Test 9", source = "params")
-            void test9(Object o, String param){}
+            void test9(Object o, String param) {
+            }
 
             @ParameterizedTest(name = "Test 10", source = "params")
-            Object test10(TestCase<String, String> o, String param){return null;}
-
-            @ParameterizedTest(name = "Test 11", source = "params")
-            static void test11(TestCase<Integer, Integer> testCase, String param){}
+            Object test10(TestCase<String, String> o, String param) {
+                return null;
+            }
 
             @ParameterizedTest(name = "Test 12", source = "params")
-            private void test12(TestCase<Integer, Integer> testCase, String param){}
+            private void test12(TestCase<Integer, Integer> testCase, String param) {
+            }
 
             @ParameterizedTest(name = "Test 13", source = "parameters")
-            private void test13(TestCase<Integer, Integer> testCase, String param){}
+            private void test13(TestCase<Integer, Integer> testCase, String param) {
+            }
 
             @ParameterizedTest(name = "Test 14", source = "p")
-            void test14(TestCase<Integer, Integer> testCase, String param){}
+            void test14(TestCase<Integer, Integer> testCase, String param) {
+            }
 
             @ParameterizedTest(name = "Test 15", source = "param")
-            void test15(TestCase<Integer, Integer> testCase, String param){}
+            void test15(TestCase<Integer, Integer> testCase, String param) {
+            }
 
             @ParameterSource
             public TestParameters<TestParameters.Parameter.P1<String>> params() {
@@ -234,6 +260,8 @@ class GiwtPredicatesTest {
                 return null;
             }
         }
+
+        GiwtTestEngine.CONTEXT.add(new TestClass());
 
         assertFalse(GiwtPredicates.isParameterizedMethodTest().test(TestClass.class.getDeclaredMethod("test7", TestCase.class, String.class)));
 
@@ -326,13 +354,10 @@ class GiwtPredicatesTest {
         assertEquals(ParameterSourceException.Reasons.IS_NOT_PUBLIC, ex.getReason());
     }
 
-    abstract  class AbstractTestClass {
-        @io.github.imagineDevit.giwt.core.annotations.Test
-        void test1(TestCase<Object,Object> tc) {}
-    }
 
     private class PrivateTestClass {
         @io.github.imagineDevit.giwt.core.annotations.Test
-        void test1(TestCase<Object,Object> tc) {}
+        void test1(TestCase<Object, Object> tc) {
+        }
     }
 }

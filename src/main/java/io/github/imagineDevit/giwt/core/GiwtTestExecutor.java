@@ -29,10 +29,14 @@ import java.util.Optional;
 public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
     private static Integer NB = null;
+
     private TestCaseReport report;
+
     private boolean allCallbacksRan = false;
 
     private Boolean withReport;
+
+    private Object testInstance;
 
     public abstract void run(TC testCase);
 
@@ -54,6 +58,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof GiwtClassTestDescriptor ctd) {
+            testInstance = ctd.getTestInstance();
             ctd.execute(
                     () -> allCallbacksRan = true,
                     d -> executeForClassDescriptor(request, d),
@@ -66,6 +71,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof GiwtMethodTestDescriptor mtd) {
+            if (testInstance == null) testInstance = mtd.getTestInstance();
             mtd.execute(d -> executeForMethodDescriptor(request, d), allCallbacksRan);
         }
 
@@ -134,10 +140,11 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
                 .orElseGet(() -> {
                     try {
 
+
                         if (root.getParams() != null) {
-                            root.getParams().executeTest(root.getTestInstance(), root.getTestMethod(), testCase);
+                            root.getParams().executeTest(testInstance, root.getTestMethod(), testCase);
                         } else {
-                            ReflectionUtils.invokeMethod(root.getTestMethod(), root.getTestInstance(), testCase);
+                            ReflectionUtils.invokeMethod(root.getTestMethod(), testInstance, testCase);
                         }
 
                         this.run(testCase);

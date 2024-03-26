@@ -4,7 +4,10 @@ package io.github.imagineDevit.giwt.core;
 import io.github.imagineDevit.giwt.core.context.GiwtContext;
 import io.github.imagineDevit.giwt.core.utils.SelectorUtils;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.ClasspathRootSelector;
+import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.util.HashMap;

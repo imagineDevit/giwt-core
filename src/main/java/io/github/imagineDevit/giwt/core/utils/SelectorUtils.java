@@ -27,35 +27,31 @@ public class SelectorUtils {
     }
 
     public static void appendTestInClass(Class<?> testClass, EngineDescriptor root) {
-        var instance = ReflectionUtils.newInstance(testClass);
-        GiwtTestEngine.CONTEXT.add(instance);
+
+        GiwtTestEngine.CONTEXT.add(testClass);
 
         if (GiwtPredicates.isTestClass().test(testClass)) {
-            Utils.checkTestNamesDuplication(instance);
-            root.addChild(new GiwtClassTestDescriptor(instance, root.getUniqueId()));
+            Utils.checkTestNamesDuplication(testClass);
+            root.addChild(new GiwtClassTestDescriptor(testClass, root.getUniqueId()));
         } else {
-            GiwtTestEngine.CONTEXT.remove(instance);
+            GiwtTestEngine.CONTEXT.remove(testClass);
         }
     }
 
     public static void appendTestInMethod(Method method, EngineDescriptor root) {
         Class<?> testClass = method.getDeclaringClass();
 
-        var instance = ReflectionUtils.newInstance(testClass);
-
-        GiwtTestEngine.CONTEXT.add(instance);
+        GiwtTestEngine.CONTEXT.add(testClass);
 
         if (GiwtPredicates.isMethodTest().test(method)) {
             root.addChild(new GiwtMethodTestDescriptor(
                     Utils.getTestName(method),
                     method,
-                    instance,
                     root.getUniqueId(),
                     null));
 
         } else if (GiwtPredicates.isParameterizedMethodTest().test(method)) {
-            root.addChild(new GiwtParameterizedMethodTestDescriptor(method, instance, root.getUniqueId(),
-                    GiwtTestEngine.CONTEXT.getParameters(instance, method)));
+            root.addChild(new GiwtParameterizedMethodTestDescriptor(method, root.getUniqueId(), GiwtTestEngine.CONTEXT.getParameters(testClass, method)));
         }
     }
 

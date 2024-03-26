@@ -41,7 +41,8 @@ class UtilsTest {
                 return value.compareTo(o.value);
             }
         }
-        record P() {}
+        record P() {
+        }
         var q = new Q(1);
 
         assertEquals(q, Utils.asComparableOrThrow(q, () -> new Exception("Error")));
@@ -67,26 +68,24 @@ class UtilsTest {
 
         class TestClass2 {
             @io.github.imagineDevit.giwt.core.annotations.Test
-            void test2 () {
+            void test2() {
             }
 
             @io.github.imagineDevit.giwt.core.annotations.Test("test2")
-            void test2p () {
+            void test2p() {
             }
 
         }
 
-        TestClass testInstance = new TestClass();
-        TestClass2 testInstance2 = new TestClass2();
-        GiwtTestEngine.CONTEXT.add(testInstance);
-        GiwtTestEngine.CONTEXT.add(testInstance2);
+        GiwtTestEngine.CONTEXT.add(new TestClass());
+        GiwtTestEngine.CONTEXT.add(new TestClass2());
 
         GiwtTestEngine.CONTEXT.addTestMethod(TestClass.class, Arrays.asList(TestClass.class.getDeclaredMethods()), false);
         GiwtTestEngine.CONTEXT.addTestMethod(TestClass2.class, List.of(TestClass2.class.getDeclaredMethod("test2")), false);
         GiwtTestEngine.CONTEXT.addTestMethod(TestClass2.class, List.of(TestClass2.class.getDeclaredMethod("test2p")), false);
 
-        Utils.checkTestNamesDuplication(testInstance);
+        Utils.checkTestNamesDuplication(TestClass.class);
 
-        assertThrows(DuplicateTestNameException.class, () -> Utils.checkTestNamesDuplication(testInstance2));
+        assertThrows(DuplicateTestNameException.class, () -> Utils.checkTestNamesDuplication(TestClass2.class));
     }
 }

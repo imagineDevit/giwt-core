@@ -5,7 +5,7 @@ import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestParameters;
 import io.github.imagineDevit.giwt.core.annotations.ParameterizedTest;
 import io.github.imagineDevit.giwt.core.annotations.Test;
-import io.github.imagineDevit.giwt.core.context.GiwtContext;
+import io.github.imagineDevit.giwt.core.context.ClassCtx;
 import io.github.imagineDevit.giwt.core.errors.DuplicateTestNameException;
 import io.github.imagineDevit.giwt.core.statements.StmtMsg;
 
@@ -93,9 +93,9 @@ public abstract class Utils {
         }
     }
 
-    public static void checkTestNamesDuplication(Object testInstance) {
-        var methods = GiwtTestEngine.CONTEXT.get(testInstance).testMethods().stream()
-                .map(GiwtContext.TestMethod::method)
+    public static void checkTestNamesDuplication(Class<?> testClass) {
+        var methods = GiwtTestEngine.CONTEXT.get(testClass).testMethods().stream()
+                .map(ClassCtx.TestMethod::method)
                 .toList();
 
         var duplicatedTestNames = findDuplicatedTestNames(methods);

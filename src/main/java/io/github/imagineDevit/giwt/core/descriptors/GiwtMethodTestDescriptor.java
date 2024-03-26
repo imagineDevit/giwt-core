@@ -29,13 +29,11 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
 
     private final Method testMethod;
 
-    private final Object testInstance;
-
     private final TestParameters.Parameter params;
 
     private final GiwtCallbacks callbacks;
 
-    public GiwtMethodTestDescriptor(String name, Method testMethod, Object testInstance, UniqueId uniqueId, TestParameters.Parameter params) {
+    public GiwtMethodTestDescriptor(String name, Method testMethod, UniqueId uniqueId, TestParameters.Parameter params) {
 
         super(
                 uniqueId.append("method", name),
@@ -43,16 +41,11 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
                 MethodSource.from(testMethod)
         );
 
-        this.testInstance = testInstance;
         this.testMethod = testMethod;
         this.params = params;
 
-        this.callbacks = GiwtTestEngine.CONTEXT.getCallbacks(this.testInstance);
+        this.callbacks = GiwtTestEngine.CONTEXT.getCallbacks(this.testMethod.getDeclaringClass());
 
-    }
-
-    public Object getTestInstance() {
-        return testInstance;
     }
 
     @Override
@@ -89,6 +82,10 @@ public class GiwtMethodTestDescriptor extends AbstractTestDescriptor {
         return AnnotationSupport.findAnnotation(this.testMethod, Skipped.class)
                 .or(() -> AnnotationSupport.findAnnotation(this.testMethod.getDeclaringClass(), Skipped.class))
                 .map(Skipped::reason);
+    }
+
+    public Object getTestInstance() {
+        return GiwtTestEngine.CONTEXT.getInstanceOf(this.testMethod.getDeclaringClass());
     }
 
     public void execute(Consumer<GiwtMethodTestDescriptor> consumer, boolean allCallacksRan) {
