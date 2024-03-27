@@ -70,7 +70,7 @@ public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT ex
     }
 
     protected void addWhenMsg(String message) {
-        this.whenMsgs.add(StmtMsg.given(message));
+        this.whenMsgs.add(StmtMsg.when(message));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.when(message));
     }
 

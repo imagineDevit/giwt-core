@@ -16,11 +16,11 @@ public record StmtMsg(String value) {
     }
 
     public static StmtMsg when(String value) {
-        return new StmtMsg(TextUtils.blue("  WHEN ") + value);
+        return new StmtMsg(TextUtils.blue("   WHEN ") + value);
     }
 
     public static StmtMsg then(String value) {
-        return new StmtMsg(TextUtils.blue("  THEN ") + value);
+        return new StmtMsg(TextUtils.blue("   THEN ") + value);
     }
 
     public static StmtMsg and(String value) {
