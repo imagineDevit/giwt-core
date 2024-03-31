@@ -12,7 +12,6 @@ public abstract class ATestCaseResult<T> {
         this.value = new ResultValue.Ok<>(value);
     }
 
-
     protected ATestCaseResult(Exception e) {
         this.value = new ResultValue.Err<>(e);
     }
@@ -48,7 +47,6 @@ public abstract class ATestCaseResult<T> {
                 return value;
             }
         }
-
 
         public static final class Err<E extends Exception> extends ResultValue {
             private final E error;

@@ -29,10 +29,14 @@ import java.util.Optional;
 public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
     private static Integer NB = null;
+
     private TestCaseReport report;
+
     private boolean allCallbacksRan = false;
 
     private Boolean withReport;
+
+    private Object testInstance;
 
     public abstract void run(TC testCase);
 
@@ -49,16 +53,17 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof EngineDescriptor) {
-
             initReport();
-
             executeForEngineDescriptor(request, root);
         }
 
         if (root instanceof GiwtClassTestDescriptor ctd) {
-            allCallbacksRan = true;
-            ctd.execute(d -> executeForClassDescriptor(request, d));
-            allCallbacksRan = false;
+            testInstance = ctd.getTestInstance();
+            ctd.execute(
+                    () -> allCallbacksRan = true,
+                    d -> executeForClassDescriptor(request, d),
+                    () -> allCallbacksRan = false
+            );
         }
 
         if (root instanceof GiwtParameterizedMethodTestDescriptor) {
@@ -66,7 +71,8 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
         }
 
         if (root instanceof GiwtMethodTestDescriptor mtd) {
-            mtd.execute(d -> executeForMethodDescriptor(request, mtd), allCallbacksRan);
+            if (testInstance == null) testInstance = mtd.getTestInstance();
+            mtd.execute(d -> executeForMethodDescriptor(request, d), allCallbacksRan);
         }
 
     }
@@ -93,7 +99,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     }
 
     private void executeForClassDescriptor(ExecutionRequest request, GiwtClassTestDescriptor r) {
-        TestCaseReport.ClassReport classReport = new TestCaseReport.ClassReport(r.getTestClass().getName());
+        TestCaseReport.ClassReport classReport = r.createReport();
         if (r.shouldBeReported()) {
             getReport().ifPresent(tc -> tc.addClassReport(classReport));
         }
@@ -120,7 +126,9 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
         TestCaseReport.TestReport report = new TestCaseReport.TestReport();
 
-        TC testCase = root.getTestCase(report, this::createTestCase, ATestCase::getName);
+        TC testCase = root.getTestCase(report,
+                (n) -> (r, p) -> this.createTestCase(n, r, p),
+                ATestCase::getName);
 
         EngineExecutionListener listener = request.getEngineExecutionListener();
 
@@ -134,10 +142,11 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
                 .orElseGet(() -> {
                     try {
 
+
                         if (root.getParams() != null) {
-                            root.getParams().executeTest(root.getTestInstance(), root.getTestMethod(), testCase);
+                            root.getParams().executeTest(testInstance, root.getTestMethod(), testCase);
                         } else {
-                            ReflectionUtils.invokeMethod(root.getTestMethod(), root.getTestInstance(), testCase);
+                            ReflectionUtils.invokeMethod(root.getTestMethod(), testInstance, testCase);
                         }
 
                         this.run(testCase);
@@ -148,7 +157,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
 
                         listener.executionFinished(root, TestExecutionResult.successful());
 
-                    } catch (Exception e) {
+                    } catch (Throwable e) {
 
                         report.setStatus(TestCaseReport.TestReport.Status.FAILURE);
 
@@ -186,6 +195,5 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     private Optional<TestCaseReport> getReport() {
         return Optional.ofNullable(report);
     }
-
 
 }

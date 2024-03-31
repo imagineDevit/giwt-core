@@ -16,7 +16,7 @@ import java.util.List;
  * @since 0.0.1
  */
 @SuppressWarnings("unused")
-public class TestParameters<T extends TestParameters.Parameter> {
+public final class TestParameters<T extends TestParameters.Parameter> {
 
     private final List<T> parameters = new ArrayList<>();
 

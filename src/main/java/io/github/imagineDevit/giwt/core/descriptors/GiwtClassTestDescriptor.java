@@ -1,16 +1,14 @@
 package io.github.imagineDevit.giwt.core.descriptors;
 
+import io.github.imagineDevit.giwt.core.GiwtTestEngine;
 import io.github.imagineDevit.giwt.core.TestConfiguration;
-import io.github.imagineDevit.giwt.core.annotations.*;
-import io.github.imagineDevit.giwt.core.callbacks.*;
-import io.github.imagineDevit.giwt.core.utils.GiwtPredicates;
+import io.github.imagineDevit.giwt.core.callbacks.GiwtCallbacks;
+import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.utils.Utils;
-import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -23,15 +21,7 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
 
     private final Class<?> testClass;
 
-    private final Object testInstance;
-
-    private final BeforeAllCallback beforeAllCallback;
-
-    private final AfterAllCallback afterAllCallback;
-
-    private final BeforeEachCallback beforeEachCallback;
-
-    private final AfterEachCallback afterEachCallback;
+    private final GiwtCallbacks callbacks;
 
     private final TestConfiguration configuration;
 
@@ -44,37 +34,9 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
 
         this.testClass = testClass;
 
-        this.testInstance = ReflectionUtils.newInstance(testClass);
+        this.callbacks = GiwtTestEngine.CONTEXT.getCallbacks(this.testClass);
 
-        this.beforeAllCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getBeforeAllMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(BeforeAll.class)).map(BeforeAll::order).orElse(0)
-                );
-
-        this.afterAllCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getAfterAllMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(AfterAll.class)).map(AfterAll::order).orElse(0)
-                );
-
-        this.beforeEachCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getBeforeEachMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(BeforeEach.class)).map(BeforeEach::order).orElse(0)
-                );
-
-
-        this.afterEachCallback = () ->
-                Utils.runCallbacks(
-                        Utils.getAfterEachMethods(testInstance),
-                        m -> Optional.ofNullable(m.getAnnotation(AfterEach.class)).map(AfterEach::order).orElse(0)
-                );
-
-        this.configuration = Optional.ofNullable(testClass.getAnnotation(ConfigureWith.class))
-                .map(ConfigureWith::value)
-                .map(ReflectionUtils::newInstance)
-                .orElse(null);
+        this.configuration = GiwtTestEngine.CONTEXT.getConfiguration(this.testClass).orElse(null);
 
         addAllChildren();
     }
@@ -84,14 +46,21 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
         return Type.CONTAINER;
     }
 
-    public Class<?> getTestClass() {
-        return testClass;
+    public TestCaseReport.ClassReport createReport() {
+        return new TestCaseReport.ClassReport(this.testClass.getName());
     }
 
-    public void execute(Consumer<GiwtClassTestDescriptor> consumer) {
-        beforeAllCallback.beforeAll();
+    public Object getTestInstance() {
+        return GiwtTestEngine.CONTEXT.getInstanceOf(this.testClass);
+    }
+
+    public void execute(Runnable before, Consumer<GiwtClassTestDescriptor> consumer, Runnable after) {
+        before.run();
+        this.callbacks.beforeAllCallback().beforeAll();
         consumer.accept(this);
-        afterAllCallback.afterAll();
+        this.callbacks.afterAllCallback().afterAll();
+        GiwtTestEngine.CONTEXT.remove(this.testClass);
+        after.run();
     }
 
     public boolean shouldBeReported() {
@@ -99,19 +68,18 @@ public class GiwtClassTestDescriptor extends AbstractTestDescriptor {
     }
 
     private void addAllChildren() {
-        ReflectionUtils.findMethods(testClass, GiwtPredicates.isMethodTest())
-                .forEach(method ->
-                        addChild(new GiwtMethodTestDescriptor(
-                                Utils.getTestName(method.getAnnotation(Test.class).value(), method),
-                                method,
-                                testInstance,
-                                getUniqueId(),
-                                null, new GiwtCallbacks(beforeAllCallback, afterAllCallback, beforeEachCallback, afterEachCallback)))
-                );
-
-        ReflectionUtils.findMethods(testClass, GiwtPredicates.isParameterizedMethodTest())
-                .forEach(method ->
-                        addChild(new GiwtParameterizedMethodTestDescriptor(method, Utils.getParameters(method, this.configuration), testInstance, getUniqueId(), new GiwtCallbacks(beforeAllCallback, afterAllCallback, beforeEachCallback, afterEachCallback), this.configuration))
+        GiwtTestEngine.CONTEXT.get(this.testClass)
+                .testMethods()
+                .forEach(testMethod -> {
+                            var method = testMethod.method();
+                            if (testMethod.isParameterized()) {
+                                addChild(
+                                        new GiwtParameterizedMethodTestDescriptor(method, getUniqueId(), GiwtTestEngine.CONTEXT.getParameters(this.testClass, method))
+                                );
+                            } else {
+                                addChild(new GiwtMethodTestDescriptor(Utils.getTestName(method), method, getUniqueId(), null));
+                            }
+                        }
                 );
     }
 }

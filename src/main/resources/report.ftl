@@ -138,24 +138,34 @@
                                                         <#if testReport.failureReason??>
 
                                                             <div class=" m-3 rounded  bg-danger text-center font-monospace align-items-center">
-                                                               <p class="text-white">${testReport.failureReason} </p>
+                                                                <p class="text-white">${testReport.failureReason} </p>
                                                             </div>
 
                                                             <div class="container">
 
                                                                 <div class="d-flex justify-content-center align-content-center">
-                                                                    <button id="showStack" class="btn btn-outline-danger" onclick=showStackTrace("stack${classReport?counter}${testReport?counter}")> show stacktrace</button>
-                                                                    <button id="hideStack" class="btn btn-light border berder-black text-black" onclick=hideStacktrace("stack${classReport?counter}${testReport?counter}") style="display: none"> hide stacktrace</button>
+                                                                    <button id="showStack"
+                                                                            class="btn btn-outline-danger"
+                                                                            onclick=showStackTrace("stack${classReport?counter}${testReport?counter}")>
+                                                                        show stacktrace
+                                                                    </button>
+                                                                    <button id="hideStack"
+                                                                            class="btn btn-light border berder-black text-black"
+                                                                            onclick=hideStacktrace("stack${classReport?counter}${testReport?counter}")
+                                                                            style="display: none"> hide stacktrace
+                                                                    </button>
                                                                 </div>
 
-                                                                <div class="container text-start text-danger rounded border border-danger p-2 mt-3" id="stack${classReport?counter}${testReport?counter}"  style="display: none">
+                                                                <div class="container text-start text-danger rounded border border-danger p-2 mt-3"
+                                                                     id="stack${classReport?counter}${testReport?counter}"
+                                                                     style="display: none">
                                                                     <#list testReport.stacktraces as trace>
                                                                         <p>${trace}</p>
                                                                     </#list>
                                                                 </div>
 
                                                             </div>
-                                                           </#if>
+                                                        </#if>
                                                     </div>
                                                 </div>
                                             </div>

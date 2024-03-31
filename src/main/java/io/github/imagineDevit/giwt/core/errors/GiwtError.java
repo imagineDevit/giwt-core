@@ -6,7 +6,8 @@ package io.github.imagineDevit.giwt.core.errors;
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
-public sealed abstract class GiwtError extends RuntimeException permits DuplicateTestNameException, TestCaseArgMissingException {
+public sealed abstract class GiwtError extends RuntimeException
+        permits DuplicateTestNameException, ParameterSourceException, ParameterizedTestMethodException, TestClassException, TestMethodException {
     public GiwtError(String message) {
         super(message);
     }

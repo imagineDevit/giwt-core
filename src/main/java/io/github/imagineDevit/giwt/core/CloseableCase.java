@@ -1,7 +1,5 @@
 package io.github.imagineDevit.giwt.core;
 
-import io.github.imagineDevit.giwt.core.utils.Utils;
-
 import java.util.function.Supplier;
 
 /**
@@ -10,6 +8,7 @@ import java.util.function.Supplier;
  * @author Henri Joel SEDJAME
  * @since 0.0.1
  */
+@SuppressWarnings("unused")
 public abstract class CloseableCase {
     private boolean closed = false;
 
@@ -18,6 +17,14 @@ public abstract class CloseableCase {
     }
 
     protected <S> S runIfOpen(Supplier<S> fn) {
-        return Utils.runIfOpen(this.closed, fn, this::close);
+        if (closed) {
+            throw new IllegalStateException("""
+                                        \s
+                     Test case is already closed.
+                     A test case can only be run once.
+                    \s""");
+        }
+        close();
+        return fn.get();
     }
 }

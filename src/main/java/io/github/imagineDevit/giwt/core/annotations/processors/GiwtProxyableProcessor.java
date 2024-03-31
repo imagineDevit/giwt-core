@@ -22,7 +22,6 @@ import java.io.Writer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static io.github.imagineDevit.giwt.core.annotations.processors.Constants.*;
 
@@ -72,7 +71,7 @@ public class GiwtProxyableProcessor extends AbstractProcessor {
                         .map(e -> (ExecutableElement) e)
                         .filter(e -> !Objects.equals(e.getSimpleName().toString(), INIT) && e.getModifiers().contains(Modifier.PUBLIC))
                         .map(MethodProcessingData::from)
-                        .collect(Collectors.toList());
+                        .toList();
 
                 try {
                     writeFromTemplate(datas, typeElement);
