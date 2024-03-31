@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings({"unused"})
 class ContextUtilsTest {
 
-    static class TestConf implements TestConfiguration {}
+    static class TestConf extends TestConfiguration {}
 
     static class TestExtension implements BeforeAllCallback {
         @Override
@@ -21,7 +21,6 @@ class ContextUtilsTest {
             System.out.println("Before all callback");
         }
     }
-
 
     public static class ParamTestClass {
 
@@ -36,6 +35,7 @@ class ContextUtilsTest {
             return TestParameters.of(P1.of("A"), P1.of("B"));
         }
     }
+
     @Test
     void getConfiguration() {
 

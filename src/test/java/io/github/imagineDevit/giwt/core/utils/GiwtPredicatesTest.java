@@ -319,7 +319,7 @@ class GiwtPredicatesTest {
             }
         }
 
-        class TestConf implements TestConfiguration {
+        class TestConf extends TestConfiguration {
             @ParameterSource
             public TestParameters<TestParameters.Parameter.P1<String>> params() {
                 return TestParameters.of(
@@ -337,7 +337,7 @@ class GiwtPredicatesTest {
     @Test
     void shouldNotBeParameterSource() {
 
-        class TestConf implements TestConfiguration {
+        class TestConf extends TestConfiguration {
             @ParameterSource
             TestParameters<TestParameters.Parameter.P1<String>> params2() {
                 return TestParameters.of(

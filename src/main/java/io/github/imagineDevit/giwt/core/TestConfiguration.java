@@ -12,8 +12,8 @@ import java.util.Set;
  * @see ConfigureWith
  * @since 0.0.1
  */
-public interface TestConfiguration {
-    default Set<Class<?>> excludeFromReport() {
+public abstract class TestConfiguration {
+    public Set<Class<?>> excludeFromReport() {
         return Set.of();
     }
 }

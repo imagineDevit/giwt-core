@@ -12,6 +12,7 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -37,6 +38,11 @@ public abstract class GiwtTestEngine<TC extends ATestCase, E extends GiwtTestExe
     @Override
     public String getId() {
         return ENGINE_ID;
+    }
+
+    @Override
+    public Optional<String> getGroupId() {
+        return Optional.of("io.github.imagineDevit");
     }
 
     @Override
