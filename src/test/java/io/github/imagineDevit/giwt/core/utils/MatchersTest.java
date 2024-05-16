@@ -4,7 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.github.imagineDevit.giwt.core.utils.Matchers.MatchCase.matchCase;
-import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.FailureArg.*;
+import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.FailureArg.ExceptionArg;
+import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.FailureArg.StringArg;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.failure;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.Result.success;
 import static io.github.imagineDevit.giwt.core.utils.Matchers.match;
@@ -21,10 +22,10 @@ class MatchersTest {
     void testMatch() {
 
         match(matchCase(() -> true, () -> success("value")))
-        .ifPresentOrElse(
-                value -> assertEquals("value", value),
-                () -> fail("Optional should not be empty")
-        );
+                .ifPresentOrElse(
+                        value -> assertEquals("value", value),
+                        () -> fail("Optional should not be empty")
+                );
     }
 
     @Test
@@ -68,14 +69,14 @@ class MatchersTest {
             """
     )
     void testMatch4() {
-        var ex = assertThrows( RuntimeException.class, () -> match(
+        var ex = assertThrows(RuntimeException.class, () -> match(
                 matchCase(() -> false, () -> failure(new StringArg(() -> "error1"))),
                 matchCase(() -> true, () -> failure(new ExceptionArg(() -> new RuntimeException("error2")))),
                 matchCase(() -> false, () -> failure("error3")),
                 matchCase(() -> true, () -> success("value"))
         ));
 
-        var ex2 = assertThrows( IllegalStateException.class, () -> match(
+        var ex2 = assertThrows(IllegalStateException.class, () -> match(
                 matchCase(() -> true, () -> failure(new StringArg(() -> "error1"))),
                 matchCase(() -> false, () -> failure(new ExceptionArg(() -> new RuntimeException("error2")))),
                 matchCase(() -> false, () -> failure("error3")),
@@ -85,7 +86,6 @@ class MatchersTest {
         assertEquals("error2", ex.getMessage());
         assertEquals("error1", ex2.getMessage());
     }
-
 
 
 }
