@@ -1,7 +1,6 @@
 package io.github.imagineDevit.giwt.core.annotations;
 
 
-import io.github.imagineDevit.giwt.core.annotations.processors.GiwtProxyableProcessor;
 
 import java.lang.annotation.*;
 
@@ -65,7 +64,6 @@ import java.lang.annotation.*;
  *
  * @author Henri Joel SEDJAME
  * @see ParameterRecordName
- * @see GiwtProxyableProcessor
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.SOURCE)
