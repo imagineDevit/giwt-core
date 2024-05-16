@@ -10,7 +10,6 @@ import io.github.imagineDevit.giwt.core.errors.ParameterSourceException;
 import io.github.imagineDevit.giwt.core.errors.ParameterizedTestMethodException;
 import io.github.imagineDevit.giwt.core.errors.TestClassException;
 import io.github.imagineDevit.giwt.core.errors.TestMethodException;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.lang.reflect.Method;

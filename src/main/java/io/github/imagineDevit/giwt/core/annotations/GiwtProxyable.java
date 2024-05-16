@@ -1,7 +1,6 @@
 package io.github.imagineDevit.giwt.core.annotations;
 
 
-
 import java.lang.annotation.*;
 
 /**

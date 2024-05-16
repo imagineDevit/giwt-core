@@ -8,7 +8,7 @@
 
     <artifactId>giwt-core</artifactId>
 
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
 
     <description>
         A JUnit based library that allow developers to write unit test on GIVEN-WHEN-THEN format
@@ -70,11 +70,6 @@
             <version>2.3.31</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-engine-core</artifactId>
-            <version>2.3</version>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
