@@ -12,7 +12,7 @@ public abstract class ATestCaseResult<T> {
         this.value = new ResultValue.Ok<>(value);
     }
 
-    protected ATestCaseResult(Exception e) {
+    protected ATestCaseResult(Throwable e) {
         this.value = new ResultValue.Err<>(e);
     }
 
@@ -24,7 +24,7 @@ public abstract class ATestCaseResult<T> {
         }
 
         @SuppressWarnings("unchecked")
-        public <E extends Exception> Optional<Err<E>> err() {
+        public <E extends Throwable> Optional<Err<E>> err() {
             return this instanceof Err ? Optional.of((Err<E>) this) : Optional.empty();
         }
 
@@ -48,7 +48,7 @@ public abstract class ATestCaseResult<T> {
             }
         }
 
-        public static final class Err<E extends Exception> extends ResultValue {
+        public static final class Err<E extends Throwable> extends ResultValue {
             private final E error;
 
             public Err(E error) {
