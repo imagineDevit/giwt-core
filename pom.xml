@@ -8,7 +8,7 @@
 
     <artifactId>giwt-core</artifactId>
 
-    <version>0.0.5</version>
+    <version>0.0.6-SNAPSHOT</version>
 
     <description>
         A JUnit based library that allow developers to write unit test on GIVEN-WHEN-THEN format
