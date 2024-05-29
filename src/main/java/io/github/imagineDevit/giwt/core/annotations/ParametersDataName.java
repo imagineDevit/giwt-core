@@ -9,12 +9,12 @@ import java.lang.annotation.Target;
  * Used to specify the name of a record generated for a method .
  *
  * @author Henri Joel SEDJAME
- * @see GiwtProxyable
+ * @see TestProxy
  * @since 0.0.1
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.METHOD})
-public @interface ParameterRecordName {
+public @interface ParametersDataName {
 
     String value();
 }
