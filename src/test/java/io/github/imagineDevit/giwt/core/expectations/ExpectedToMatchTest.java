@@ -15,7 +15,7 @@ class ExpectedToMatchTest {
     void testOne() {
 
         try {
-            one(matching("expected to be <a>", s -> s.equals("a"))).verify("a");
+            one("expected to be <a>", s -> s.equals("a")).verify("a");
         } catch (Exception e) {
             fail("Expected value to be <a> but got <a>");
         }
@@ -27,7 +27,7 @@ class ExpectedToMatchTest {
 
         var ex = assertThrows(
                 AssertionError.class,
-                () -> one(matching("expected to be <a>", s -> s.equals("a"))).verify("b")
+                () -> one("expected to be <a>", s -> s.equals("a")).verify("b")
         );
 
         assertEquals("Matching <expected to be <a>> failed", ex.getMessage());

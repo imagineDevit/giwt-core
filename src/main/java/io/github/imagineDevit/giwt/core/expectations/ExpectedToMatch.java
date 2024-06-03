@@ -1,8 +1,8 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -31,12 +31,13 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
     /**
      * Creates a one expectation for a value.
      *
-     * @param matching the matching to be checked
-     * @param <T>      the type of the value to be checked
+     * @param description the matching description
+     * @param predicate   the condition to be checked
+     * @param <T>         the type of the value to be checked
      * @return a One expectation
      */
-    static <T> One<T> one(Matching<T> matching) {
-        return new One<>(matching);
+    static <T> One<T> one(String description, Predicate<T> predicate) {
+        return new One<>(matching(description, predicate));
     }
 
     /**
@@ -46,9 +47,10 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
      * @param <T>       the type of the value to be checked
      * @return an All expectation
      */
-    @SafeVarargs
-    static <T> All<T> all(Matching<T>... matchings) {
-        return new All<>(Arrays.asList(matchings));
+    static <T> All<T> all(Map<String, Predicate<T>> matchings) {
+        return new All<>(matchings.entrySet().stream()
+                .map(e -> matching(e.getKey(), e.getValue()))
+                .toList());
     }
 
     /**
@@ -58,9 +60,10 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
      * @param <T>       the type of the value to be checked
      * @return a None expectation
      */
-    @SafeVarargs
-    static <T> None<T> none(Matching<T>... matchings) {
-        return new None<>(Arrays.asList(matchings));
+    static <T> None<T> none(Map<String, Predicate<T>> matchings) {
+        return new None<>(matchings.entrySet().stream()
+                .map(e -> matching(e.getKey(), e.getValue()))
+                .toList());
     }
 
     /**

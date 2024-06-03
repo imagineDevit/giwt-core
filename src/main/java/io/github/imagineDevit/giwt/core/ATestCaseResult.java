@@ -1,6 +1,7 @@
 package io.github.imagineDevit.giwt.core;
 
 
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
@@ -46,6 +47,19 @@ public abstract class ATestCaseResult<T> {
             public T getValue() {
                 return value;
             }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Ok<?> ok = (Ok<?>) o;
+                return Objects.equals(value, ok.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hashCode(value);
+            }
         }
 
         public static final class Err<E extends Throwable> extends ResultValue {
@@ -57,6 +71,19 @@ public abstract class ATestCaseResult<T> {
 
             public E getError() {
                 return error;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Err<?> err = (Err<?>) o;
+                return Objects.equals(error, err.error);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hashCode(error);
             }
         }
     }

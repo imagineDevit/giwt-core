@@ -52,12 +52,12 @@ public interface Expectable<T> {
      *
      * @return the result value
      */
-    T resultValue();
+    T resultValue() throws Exception;
 
     /**
      * Returns the result error if it is present.
      *
      * @return the result error
      */
-    Throwable resultError();
+    Throwable resultError() throws Exception;
 }

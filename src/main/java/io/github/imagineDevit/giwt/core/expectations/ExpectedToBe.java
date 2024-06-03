@@ -2,6 +2,8 @@ package io.github.imagineDevit.giwt.core.expectations;
 
 import io.github.imagineDevit.giwt.core.utils.Utils;
 
+import java.util.Objects;
+
 /**
  * This interface provides a set of static methods to create different types of expectations.
  * Each expectation is a record that implements the ExpectedToBe interface and overrides the verify method.
@@ -90,6 +92,17 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         return new LessThan<>(max);
     }
 
+    static <T> SameAs<T> sameAs(T expected) {
+        return new SameAs<>(expected);
+    }
+
+    static <S> S requireNotNull(S value, String message) {
+        if (value == null) {
+            throw new AssertionError(message);
+        }
+        return value;
+    }
+
     /**
      * This record represents an expectation that a value should be null.
      *
@@ -144,7 +157,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
 
         @Override
         public void verify(T value) {
-            if (!value.equals(expected)) {
+            if (!Objects.equals(value, expected)) {
                 throw new AssertionError("Expected value to be <" + expected + "> but got <" + value + ">");
             }
         }
@@ -165,7 +178,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
 
         @Override
         public void verify(T value) {
-            if (value.equals(expected)) {
+            if (Objects.equals(value, expected)) {
                 throw new AssertionError("Expected value to be different from <" + expected + "> but got <" + value + ">");
             }
         }
@@ -188,7 +201,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             var c = Utils.asComparableOrThrow(
-                    value,
+                    requireNotNull(value, "Expected value to be between <" + min + "> and <" + max + "> but got <null>"),
                     () -> new IllegalStateException("Value is not comparable")
             );
 
@@ -214,7 +227,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             var c = Utils.asComparableOrThrow(
-                    value,
+                    requireNotNull(value, "Expected to be greater than <" + min + "> but got <null>"),
                     () -> new IllegalStateException("Value is not comparable")
             );
 
@@ -239,7 +252,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             var c = Utils.asComparableOrThrow(
-                    value,
+                    requireNotNull(value, "Expected to be less than <" + max + "> but got <null>"),
                     () -> new IllegalStateException("Value is not comparable")
             );
 
@@ -249,5 +262,17 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         }
     }
 
+    record SameAs<T>(T expected) implements ExpectedToBe<T> {
+        @Override
+        public Name name() {
+            return new Name.Value("Expected to be the same as <" + expected + ">");
+        }
 
+        @Override
+        public void verify(T value) {
+            if (value != expected) {
+                throw new AssertionError("Expected value to be the same as <" + expected + "> but got <" + value + ">");
+            }
+        }
+    }
 }

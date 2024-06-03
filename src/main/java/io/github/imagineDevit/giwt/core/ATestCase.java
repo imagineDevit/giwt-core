@@ -3,11 +3,13 @@ package io.github.imagineDevit.giwt.core;
 
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
 import io.github.imagineDevit.giwt.core.statements.StmtMsg;
-import io.github.imagineDevit.giwt.core.utils.TextUtils;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
+
+import static io.github.imagineDevit.giwt.core.utils.TextUtils.*;
 
 
 /**
@@ -60,27 +62,27 @@ public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT ex
     }
 
     protected void addGivenMsg(String message) {
-        this.givenMsgs.add(StmtMsg.given(message));
+        this.givenMsgs.add(StmtMsg.given(message.trim()));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.given(message));
     }
 
     protected void addAndGivenMsg(String message) {
-        this.givenMsgs.add(StmtMsg.and(message));
+        this.givenMsgs.add(StmtMsg.and(message.trim()));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.and(message));
     }
 
     protected void addWhenMsg(String message) {
-        this.whenMsgs.add(StmtMsg.when(message));
+        this.whenMsgs.add(StmtMsg.when(message.trim()));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.when(message));
     }
 
     protected void addThenMsg(String message) {
-        this.thenMsgs.add(StmtMsg.then(message));
+        this.thenMsgs.add(StmtMsg.then(message.trim()));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.then(message));
     }
 
     protected void addAndThenMsg(String message) {
-        this.thenMsgs.add(StmtMsg.and(message));
+        this.thenMsgs.add(StmtMsg.and(message.trim()));
         this.report.addDescriptionItem(TestCaseReport.TestReport.DescriptionItem.and(message));
     }
 
@@ -90,8 +92,8 @@ public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT ex
      * Test case result that can be either success or failure
      */
     public enum Result {
-        SUCCESS("✅", TextUtils.green("Passed")),
-        FAILURE("❌", TextUtils.red("Failed"));
+        SUCCESS("✅", green(bold("PASSED"))),
+        FAILURE("💥", red(bold("FAILED")));
 
         private final String s;
         private final String m;
@@ -102,12 +104,17 @@ public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT ex
         }
 
         public String message(String reason) {
-            var r = (reason != null) ? " (reason: " + TextUtils.yellow(reason) + ")" : "";
+            Supplier<String> rlabel = () -> """
+                      👉%s : %s
+                    """.formatted(bold("reason"), yellow(Utils.formatReason(reason)));
 
-            return """
+            return (reason == null) ? """
                     %s
                     %s
-                    """.formatted(s + m + r, Utils.DASH);
+                    """.formatted(s + m, Utils.DASH) : """
+                    %s
+                    %s%s
+                    """.formatted(s + m, rlabel.get(), Utils.DASH);
         }
     }
 

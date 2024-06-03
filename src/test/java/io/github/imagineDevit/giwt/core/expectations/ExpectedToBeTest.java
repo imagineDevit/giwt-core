@@ -152,4 +152,13 @@ class ExpectedToBeTest {
 
     }
 
+    @Test
+    void testSameAs() {
+        try {
+            sameAs("Hello").verify("Hello");
+        } catch (Exception e) {
+            fail("Expected value to be the same as <Hello> but got <Hello>");
+        }
+    }
+
 }
