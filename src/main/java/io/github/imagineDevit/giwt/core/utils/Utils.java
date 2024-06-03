@@ -10,12 +10,11 @@ import io.github.imagineDevit.giwt.core.errors.DuplicateTestNameException;
 import io.github.imagineDevit.giwt.core.statements.StmtMsg;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static io.github.imagineDevit.giwt.core.utils.TextUtils.*;
 
 /**
  * This class contains utility methods that are used to run test callbacks, to get test parameters and other utility methods.
@@ -26,7 +25,10 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused")
 public abstract class Utils {
 
-    public static final String DASH = ".".repeat(45);
+    public static final int MAX_LENGTH = 100;
+
+    public static final String DASH = bold("-".repeat(MAX_LENGTH));
+
 
     public static String getTestName(Method method) {
         return Optional.ofNullable(method.getAnnotation(Test.class))
@@ -39,11 +41,11 @@ public abstract class Utils {
     }
 
     public static String reportTestCase(String name, List<StmtMsg> givenMsgs, List<StmtMsg> whenMsgs, List<StmtMsg> thenMsgs, TestParameters.Parameter parameters) {
-        var n = name;
+        var n = name.trim();
 
         if (parameters != null) n = parameters.formatName(n);
 
-        var title = TextUtils.bold("▶️" + TextUtils.italic(TextUtils.purple(n)));
+        var title = purple(n);
 
         var givenMsg = givenMsgs.stream().map(StmtMsg::value).collect(Collectors.joining("\n"));
         var whenMsg = whenMsgs.stream().map(StmtMsg::value).collect(Collectors.joining("\n"));
@@ -51,12 +53,14 @@ public abstract class Utils {
 
         var sb = new StringBuilder();
 
-        sb.append(
-                """
-                        %s
-                        %s
-                        """.formatted(DASH, title)
-        );
+        var lineLength = DASH.length() - (title.toLowerCase().length() + 5);
+        var part1 = bold("🎬[ ");
+        var part2 = bold(" ]" + "-".repeat(lineLength));
+
+        sb.append("""
+                %s%s%s
+                """.formatted(part1, title, part2));
+
 
         if (!givenMsg.isEmpty()) {
             sb.append("""
@@ -76,11 +80,20 @@ public abstract class Utils {
                     """.formatted(thenMsg));
         }
 
-        //sb.append("""
-        //        %s
-        //        """.formatted(DASH));
-
         return sb.toString();
+    }
+
+
+    /**
+     * @return a string representation of the title of the list of expectations section.
+     */
+    public static String listExpectations() {
+        return """
+                
+                  ----------------------
+                  %s
+                  ----------------------
+                """.formatted(bold(italic(yellow(" List of expectations"))));
     }
 
     @SuppressWarnings("unchecked")
@@ -102,6 +115,37 @@ public abstract class Utils {
         if (!duplicatedTestNames.isEmpty()) {
             throw new DuplicateTestNameException(duplicatedTestNames);
         }
+    }
+
+    public static List<String> splitStr(String str, int len) {
+        var list = new ArrayList<String>();
+
+        if (str.length() <= len) {
+            list.add(str);
+            return list;
+        }
+
+        var words = str.split(" ");
+
+        var sb = new StringBuilder();
+
+        for (var word : words) {
+            if (sb.length() + word.length() + 1 <= len) {
+                sb.append(word).append(" ");
+            } else {
+                list.add(sb.toString());
+                sb = new StringBuilder();
+                sb.append(" ".repeat(13));
+                sb.append(word).append(" ");
+            }
+        }
+
+        list.add(sb.toString());
+        return list;
+    }
+
+    public static String formatReason(String reason) {
+        return String.join("\n", splitStr(reason, (MAX_LENGTH - 15)));
     }
 
     private static List<String> findDuplicatedTestNames(List<Method> methods) {

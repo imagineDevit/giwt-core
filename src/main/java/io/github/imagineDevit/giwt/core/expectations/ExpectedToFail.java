@@ -8,6 +8,7 @@ package io.github.imagineDevit.giwt.core.expectations;
  */
 public sealed interface ExpectedToFail extends Expectation.OnFailure {
 
+
     /**
      * Creates a failure expectation that an exception should be of a specific type.
      *
