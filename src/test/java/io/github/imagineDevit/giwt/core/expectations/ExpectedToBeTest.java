@@ -1,6 +1,7 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
 import org.junit.jupiter.api.Test;
 
 import static io.github.imagineDevit.giwt.core.expectations.ExpectedToBe.*;
@@ -20,7 +21,7 @@ class ExpectedToBeTest {
     @Test
     void testNull2() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> null_().verify("Hello")
         );
 
@@ -40,7 +41,7 @@ class ExpectedToBeTest {
     @Test
     void testNotNull2() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> notNull().verify(null)
         );
 
@@ -61,7 +62,7 @@ class ExpectedToBeTest {
     @Test
     void testEqualTo2() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> equalTo("World").verify("Hello")
         );
 
@@ -82,7 +83,7 @@ class ExpectedToBeTest {
     @Test
     void testNotEqualTo2() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> notEqualTo("Hello").verify("Hello")
         );
 
@@ -102,7 +103,7 @@ class ExpectedToBeTest {
     @Test
     void testBetween2() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> between(1, 10).verify(0)
         );
 
@@ -123,7 +124,7 @@ class ExpectedToBeTest {
     void testGreaterThan2() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> greaterThan(1).verify(0)
         );
 
@@ -144,7 +145,7 @@ class ExpectedToBeTest {
     void testLessThan2() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> lessThan(0).verify(5)
         );
 

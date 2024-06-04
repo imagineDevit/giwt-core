@@ -1,5 +1,8 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -62,7 +65,11 @@ public sealed interface ExpectedToHave<T> extends Expectation.OnValue<T> {
             else throw new IllegalStateException("Result value has no size");
 
             if (length != size)
-                throw new AssertionError("Expected result to have size <" + size + "> but got <" + length + ">");
+                throw new ExpectationError(
+                        "Expected result to have size <" + size + "> but got <" + length + ">",
+                        String.valueOf(size),
+                        String.valueOf(length)
+                );
         }
     }
 
@@ -83,7 +90,11 @@ public sealed interface ExpectedToHave<T> extends Expectation.OnValue<T> {
         public void verify(T value) {
             if (value instanceof Collection<?> collection) {
                 if (!collection.contains(item))
-                    throw new AssertionError("Expected result to contain <" + item + "> but it does not");
+                    throw new ExpectationError(
+                            "Expected result to contain <" + item + "> but it does not",
+                            " one of " + collection,
+                            item.toString()
+                    );
             } else if (value instanceof Object[] array) {
                 boolean found = false;
                 for (Object o : array) {
@@ -92,13 +103,25 @@ public sealed interface ExpectedToHave<T> extends Expectation.OnValue<T> {
                         break;
                     }
                 }
-                if (!found) throw new AssertionError("Expected result to contain <" + item + "> but it does not");
+                if (!found) throw new ExpectationError(
+                        "Expected result to contain <" + item + "> but it does not",
+                        " one of " + Arrays.toString(array),
+                        item.toString()
+                );
             } else if (value instanceof Map<?, ?> map) {
                 if (!map.containsValue(item))
-                    throw new AssertionError("Expected result to contain <" + item + "> but it does not");
+                    throw new ExpectationError(
+                            "Expected result to contain <" + item + "> but it does not",
+                            "one of" + map.values(),
+                            item.toString()
+                    );
             } else if (value instanceof String s) {
                 if (!s.contains(item.toString()))
-                    throw new AssertionError("Expected result to contain <" + item + "> but it does not");
+                    throw new ExpectationError(
+                            "Expected result to contain <" + item + "> but it does not",
+                            " one of " + s,
+                            item.toString()
+                    );
             } else {
                 throw new IllegalStateException("Result value is not a collection, an array, a map or a string");
             }

@@ -1,5 +1,7 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ResultValueError;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -136,9 +138,9 @@ public sealed interface Expectation<T> {
                 try {
                     error = expectable.resultError();
                     expectations.forEach(e -> e.doVerify(error));
-                } catch (Exception e) {
+                } catch (ResultValueError.ExpectedErrorFailed e) {
                     System.out.printf("""
-                             %s %s %s
+                                 %s %s %s
                             
                             """, yellow(PLAY), italic("Expected to fail"), red(FAILED));
                     try {
@@ -149,7 +151,6 @@ public sealed interface Expectation<T> {
                     }
                 }
             }
-
 
             public void verify() {
                 doVerify(null);
@@ -188,9 +189,9 @@ public sealed interface Expectation<T> {
                 try {
                     value = expectable.resultValue();
                     expectations.forEach(e -> e.doVerify(value));
-                } catch (Exception e) {
+                } catch (ResultValueError.ExpectedValueFailed e) {
                     System.out.printf("""
-                             %s %s %s
+                                 %s %s %s
                             
                             """, yellow(PLAY), italic("Expected to succeed"), red(FAILED));
                     try {
@@ -212,7 +213,6 @@ public sealed interface Expectation<T> {
                 verify();
                 return value;
             }
-
         }
     }
 

@@ -106,7 +106,7 @@ public abstract class ATestCase<T, R, STATE extends ATestCaseState<T>, RESULT ex
         public String message(String reason) {
             Supplier<String> rlabel = () -> """
                       👉%s : %s
-                    """.formatted(bold("reason"), yellow(Utils.formatReason(reason)));
+                    """.formatted(bold("reason"), reason);
 
             return (reason == null) ? """
                     %s

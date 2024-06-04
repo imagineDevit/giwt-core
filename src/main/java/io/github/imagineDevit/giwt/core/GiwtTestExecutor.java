@@ -5,7 +5,7 @@ import io.github.imagineDevit.giwt.core.descriptors.GiwtMethodTestDescriptor;
 import io.github.imagineDevit.giwt.core.descriptors.GiwtParameterizedMethodTestDescriptor;
 import io.github.imagineDevit.giwt.core.report.ReportProcessor;
 import io.github.imagineDevit.giwt.core.report.TestCaseReport;
-import io.github.imagineDevit.giwt.core.utils.MvnArgs;
+import io.github.imagineDevit.giwt.core.utils.EnvVars;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
@@ -45,7 +45,7 @@ public abstract class GiwtTestExecutor<TC extends ATestCase> {
     public void execute(ExecutionRequest request, TestDescriptor root) {
 
         if (withReport == null) {
-            withReport = Boolean.valueOf(System.getenv(MvnArgs.GENERATE_REPORT));
+            withReport = Boolean.valueOf(System.getenv(EnvVars.GENERATE_REPORT));
         }
 
         if (NB == null) {

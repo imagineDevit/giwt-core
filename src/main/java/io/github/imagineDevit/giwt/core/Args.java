@@ -2,6 +2,7 @@ package io.github.imagineDevit.giwt.core;
 
 /**
  * A record that represents a list of arguments
+ *
  * @author Henri Joel SEDJAME
  * @version 0.0.9
  */
