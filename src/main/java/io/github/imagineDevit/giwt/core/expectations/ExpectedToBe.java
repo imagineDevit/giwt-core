@@ -1,5 +1,6 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
 import io.github.imagineDevit.giwt.core.utils.Utils;
 
 import java.util.Objects;
@@ -98,7 +99,7 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
 
     static <S> S requireNotNull(S value, String message) {
         if (value == null) {
-            throw new AssertionError(message);
+            throw new ExpectationError(message, "!= null", "null");
         }
         return value;
     }
@@ -117,7 +118,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             if (value != null) {
-                throw new AssertionError("Expected <null> but got <%s>".formatted(value.toString()));
+                throw new ExpectationError(
+                        "Expected <null> but got <%s>".formatted(value.toString()),
+                        "null",
+                        value.toString()
+                );
             }
         }
     }
@@ -137,7 +142,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             if (value == null) {
-                throw new AssertionError("Expected not null value but got <null>");
+                throw new ExpectationError(
+                        "Expected not null value but got <null>",
+                        "!= null",
+                        "null"
+                );
             }
         }
     }
@@ -158,7 +167,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             if (!Objects.equals(value, expected)) {
-                throw new AssertionError("Expected value to be <" + expected + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be <" + expected + "> but got <" + value + ">",
+                        expected.toString(),
+                        value.toString()
+                );
             }
         }
     }
@@ -179,7 +192,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             if (Objects.equals(value, expected)) {
-                throw new AssertionError("Expected value to be different from <" + expected + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be different from <" + expected + "> but got <" + value + ">",
+                        "!=" + expected,
+                        value.toString()
+                );
             }
         }
     }
@@ -206,7 +223,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
             );
 
             if (c.compareTo(min) < 0 || c.compareTo(max) > 0) {
-                throw new AssertionError("Expected value to be between <" + min + "> and <" + max + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be between <" + min + "> and <" + max + "> but got <" + value + ">",
+                        min + " < " + value + " < " + max,
+                        value.toString()
+                );
             }
         }
     }
@@ -232,7 +253,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
             );
 
             if (c.compareTo(min) <= 0) {
-                throw new AssertionError("Expected value to be greater than <" + min + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be greater than <" + min + "> but got <" + value + ">",
+                        "> " + min,
+                        value.toString()
+                );
             }
         }
     }
@@ -257,7 +282,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
             );
 
             if (c.compareTo(max) >= 0) {
-                throw new AssertionError("Expected value to be less than <" + max + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be less than <" + max + "> but got <" + value + ">",
+                        "< " + max,
+                        value.toString()
+                );
             }
         }
     }
@@ -271,7 +300,11 @@ public sealed interface ExpectedToBe<T> extends Expectation.OnValue<T> {
         @Override
         public void verify(T value) {
             if (value != expected) {
-                throw new AssertionError("Expected value to be the same as <" + expected + "> but got <" + value + ">");
+                throw new ExpectationError(
+                        "Expected value to be the same as <" + expected + "> but got <" + value + ">",
+                        expected.toString(),
+                        value.toString()
+                );
             }
         }
     }

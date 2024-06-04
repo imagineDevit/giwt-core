@@ -7,7 +7,7 @@ package io.github.imagineDevit.giwt.core.errors;
  * @since 0.0.1
  */
 public sealed abstract class GiwtError extends RuntimeException
-        permits DuplicateTestNameException, ParameterSourceException, ParameterizedTestMethodException, TestClassException, TestMethodException {
+        permits DuplicateTestNameException, ExpectationError, ParameterSourceException, ParameterizedTestMethodException, ResultValueError, TestClassException, TestMethodException {
     public GiwtError(String message) {
         super(message);
     }

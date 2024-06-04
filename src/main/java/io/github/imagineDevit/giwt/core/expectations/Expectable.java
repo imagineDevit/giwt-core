@@ -1,6 +1,7 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
 import io.github.imagineDevit.giwt.core.ATestCaseResult;
+import io.github.imagineDevit.giwt.core.errors.ResultValueError;
 
 /**
  * This interface provides methods for asserting the state of a result value.
@@ -52,12 +53,12 @@ public interface Expectable<T> {
      *
      * @return the result value
      */
-    T resultValue() throws Exception;
+    T resultValue() throws ResultValueError.ExpectedValueFailed;
 
     /**
      * Returns the result error if it is present.
      *
      * @return the result error
      */
-    Throwable resultError() throws Exception;
+    Throwable resultError() throws ResultValueError.ExpectedErrorFailed;
 }

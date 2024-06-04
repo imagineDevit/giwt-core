@@ -1,5 +1,6 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
@@ -24,7 +25,7 @@ class ExpectedToFailTest {
     void testWithType2() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> withType(IllegalStateException.class).verify(new NoSuchElementException())
         );
 
@@ -45,7 +46,7 @@ class ExpectedToFailTest {
     void testWithMessage2() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> withMessage("Null pointer").verify(new Exception("Illegal state"))
         );
 

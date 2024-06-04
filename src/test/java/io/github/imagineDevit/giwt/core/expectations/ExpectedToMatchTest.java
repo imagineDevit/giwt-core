@@ -1,6 +1,7 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -26,7 +27,7 @@ class ExpectedToMatchTest {
     void testOne2() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> one("expected to be <a>", s -> s.equals("a")).verify("b")
         );
 
@@ -54,7 +55,7 @@ class ExpectedToMatchTest {
         String desc2 = "expected to have length 1";
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> new ExpectedToMatch.All<String>(List.of(
                         matching(desc1, s -> s.equals("a")),
                         matching(desc2, s -> s.length() == 1)
@@ -71,7 +72,7 @@ class ExpectedToMatchTest {
         String desc2 = "expected to have length 1";
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> new ExpectedToMatch.All<String>(List.of(
                         matching(desc2, s -> s.length() == 1),
                         matching(desc1, s -> s.equals("a"))
@@ -103,7 +104,7 @@ class ExpectedToMatchTest {
         String desc2 = "expected to have length 1";
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> new ExpectedToMatch.None<String>(List.of(
                         matching(desc1, s -> s.equals("ab")),
                         matching(desc2, s -> s.length() == 1)
@@ -119,7 +120,7 @@ class ExpectedToMatchTest {
         String desc2 = "expected to have length 2";
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> new ExpectedToMatch.None<String>(List.of(
                         matching(desc1, s -> s.equals("a")),
                         matching(desc2, s -> s.length() == 2)

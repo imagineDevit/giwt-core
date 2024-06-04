@@ -1,6 +1,8 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -74,7 +76,11 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
     record Matching<T>(String description, Predicate<T> predicate) {
         public void shouldTest(T value) {
             if (!predicate.test(value)) {
-                throw new AssertionError("Matching <%s> failed".formatted(description));
+                throw new ExpectationError(
+                        "Matching <%s> failed".formatted(description),
+                        description,
+                        "not (" + description + ")"
+                );
             }
         }
 

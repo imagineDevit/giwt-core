@@ -1,5 +1,6 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -66,7 +67,7 @@ class ExpectedToHaveTest {
     @Test
     void testSize6() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> size(4).verify("abc")
         );
 
@@ -128,7 +129,7 @@ class ExpectedToHaveTest {
     void testAnItemEqualTo6() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> anItemEqualTo("d").verify("abc")
         );
 
@@ -140,7 +141,7 @@ class ExpectedToHaveTest {
     void testAnItemEqualTo7() {
 
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> anItemEqualTo(false).verify(new Object[]{1, "2", true})
         );
 
@@ -150,7 +151,7 @@ class ExpectedToHaveTest {
     @Test
     void testAnItemEqualTo8() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> anItemEqualTo("1").verify(Map.of("1", 1, "2", "2", "3", true))
         );
 
@@ -160,7 +161,7 @@ class ExpectedToHaveTest {
     @Test
     void testAnItemEqualTo9() {
         var ex = assertThrows(
-                AssertionError.class,
+                ExpectationError.class,
                 () -> anItemEqualTo(3).verify(List.of(1, "2", true))
         );
 

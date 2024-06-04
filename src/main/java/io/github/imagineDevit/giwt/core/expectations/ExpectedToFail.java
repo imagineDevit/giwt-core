@@ -1,5 +1,7 @@
 package io.github.imagineDevit.giwt.core.expectations;
 
+import io.github.imagineDevit.giwt.core.errors.ExpectationError;
+
 /**
  * This interface provides a set of static methods to create different types of failure expectations.
  * Each failure expectation is a record that implements the ExpectedToFail interface and overrides the verify method.
@@ -44,7 +46,11 @@ public sealed interface ExpectedToFail extends Expectation.OnFailure {
         @Override
         public void verify(Throwable e) {
             if (!clazz.isInstance(e)) {
-                throw new AssertionError("Expected error to be of type <" + clazz.getName() + "> but got <" + e.getClass().getName() + ">");
+                throw new ExpectationError(
+                        "Expected error to be of type <" + clazz.getName() + "> but got <" + e.getClass().getName() + ">",
+                        clazz.getName(),
+                        e.getClass().getName()
+                );
             }
         }
     }
@@ -63,7 +69,11 @@ public sealed interface ExpectedToFail extends Expectation.OnFailure {
         @Override
         public void verify(Throwable e) {
             if (!e.getMessage().equals(message)) {
-                throw new AssertionError("Expected error message to be <" + message + "> but got <" + e.getMessage() + ">");
+                throw new ExpectationError(
+                        "Expected error message to be <" + message + "> but got <" + e.getMessage() + ">",
+                        message,
+                        e.getMessage()
+                );
             }
 
         }

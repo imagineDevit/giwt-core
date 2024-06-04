@@ -59,6 +59,7 @@ public abstract class Utils {
 
         sb.append("""
                 %s%s%s
+                
                 """.formatted(part1, title, part2));
 
 
