@@ -53,9 +53,10 @@ public abstract class Utils {
 
         var sb = new StringBuilder();
 
-        var lineLength = DASH.length() - (title.toLowerCase().length() + 5);
+        int titleLength = title.toLowerCase().length() + 5;
+        var lineLength = DASH.length() - titleLength;
         var part1 = bold("🎬[ ");
-        var part2 = bold(" ]" + "-".repeat(lineLength));
+        var part2 = bold(" ]" + "-".repeat(Math.max(lineLength, 0)));
 
         sb.append("""
                 %s%s%s

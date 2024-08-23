@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -44,7 +45,8 @@ public final class TestParameters<T extends TestParameters.Parameter> {
 
         public String formatName(String name) {
             for (int i = 0; i < paramValues.length; i++) {
-                name = name.replace("{%s}".formatted(i), paramValues[i].toString());
+                name = name.replace("{%s}".formatted(i),
+                        Optional.ofNullable(paramValues[i]).map(Object::toString).orElse("null"));
             }
             return name;
         }

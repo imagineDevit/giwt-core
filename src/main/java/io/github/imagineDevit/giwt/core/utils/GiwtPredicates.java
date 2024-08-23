@@ -160,9 +160,9 @@ public class GiwtPredicates {
 
     private static boolean isParameterizedTestMethod(Method method) {
 
-        final Class<?>[] allArgs = method.getParameterTypes();
-        final AtomicReference<Class<?>[]> methodParamTypes = new AtomicReference<>();
-        final AtomicReference<Type[]> pTypes = new AtomicReference<>();
+        final Type[] methodArgTypes = method.getGenericParameterTypes();
+        final AtomicReference<Type[]> methodParamTypesRef = new AtomicReference<>();
+        final AtomicReference<Type[]> sourceParamTypesRef = new AtomicReference<>();
         final AtomicBoolean methodSourceFound = new AtomicBoolean(false);
 
         return match(
@@ -176,7 +176,7 @@ public class GiwtPredicates {
                         () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.DO_NOT_HAVE_MORE_THAN_ONE_ARG)))
                 ),
                 matchCase(
-                        () -> !ATestCase.class.isAssignableFrom(allArgs[0]),
+                        () -> !ATestCase.class.isAssignableFrom(method.getParameterTypes()[0]),
                         () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), ParameterizedTestMethodException.Reasons.HAS_BAD_FIRST_ARG_TYPE)))
                 ),
                 matchCase(
@@ -192,28 +192,29 @@ public class GiwtPredicates {
                                     ).getActualTypeArguments()[0]
                             ).getActualTypeArguments();
 
-                            pTypes.set(pt);
+                            sourceParamTypesRef.set(pt);
 
-                            methodParamTypes.set(Arrays.copyOfRange(allArgs, 1, allArgs.length));
+                            methodParamTypesRef.set(Arrays.copyOfRange(methodArgTypes, 1, methodArgTypes.length));
 
-                            return !methodSourceFound.get() || pt.length != methodParamTypes.get().length;
+                            return !methodSourceFound.get() || pt.length != methodParamTypesRef.get().length;
                         },
                         () -> methodSourceFound.get()
-                                ? failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), pTypes.get(), methodParamTypes.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_NUMBER)))
+                                ? failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), sourceParamTypesRef.get(), methodParamTypesRef.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_NUMBER)))
                                 : failure(new ExceptionArg(() -> new ParameterSourceException(method.getAnnotation(ParameterizedTest.class).source(), ParameterSourceException.Reasons.NOT_FOUND)))
                 ),
                 matchCase(
                         () -> {
-                            var mpt = methodParamTypes.get();
-                            var pt = pTypes.get();
-                            for (int i = 0; i < mpt.length; i++) {
-                                String typeName = mpt[i].getTypeName();
-                                String expectedType = pt[i].getTypeName();
+                            var methodParamType = methodParamTypesRef.get();
+                            var sourceParamType = sourceParamTypesRef.get();
+                            for (int i = 0; i < methodParamType.length; i++) {
+
+                                String typeName = methodParamType[i].getTypeName();
+                                String expectedType = sourceParamType[i].getTypeName();
                                 if (!areTypesEqual(typeName, expectedType)) return true;
                             }
                             return false;
                         },
-                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), pTypes.get(), methodParamTypes.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_TYPES)))
+                        () -> failure(new ExceptionArg(() -> new ParameterizedTestMethodException(methodName.apply(method), sourceParamTypesRef.get(), methodParamTypesRef.get(), ParameterizedTestMethodException.Reasons.HAS_BAD_ARGS_TYPES)))
                 ),
                 matchCase(
                         () -> !method.getReturnType().equals(Void.TYPE),
