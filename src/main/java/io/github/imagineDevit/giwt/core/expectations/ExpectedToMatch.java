@@ -123,7 +123,7 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
 
         @Override
         public void verify(T value) {
-            matchings.forEach(matching -> new One<T>(matching).verify(value));
+            matchings.forEach(matching -> new One<T>(matching).doVerify(value));
         }
     }
 
@@ -140,7 +140,7 @@ public sealed interface ExpectedToMatch<T> extends Expectation.OnValue<T> {
 
         @Override
         public void verify(T value) {
-            matchings.forEach(matching -> new One<T>(matching.not()).verify(value));
+            matchings.forEach(matching -> new One<T>(matching.not()).doVerify(value));
         }
     }
 }
